@@ -10,8 +10,7 @@ const userSchema = new Schema({
   name: { type: String, required: true },
   address: { type: String, required: true },
   contact: { type: Number, required: true },
-  bio: { type: String, required: false },
-  cgpa: { type: Number, default: 0 },
+  expertise: { type: String, required: false },
   role: { type: String, default: "student" },
 });
 module.exports = mongoose.model("User", userSchema);
