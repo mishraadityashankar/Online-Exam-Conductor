@@ -1,4 +1,5 @@
 import { Drawer, Typography, Box, Avatar, Button } from "@mui/material";
+import { textAlign } from "@mui/system";
 import React, { useState } from "react";
 
 function Navbar(props) {
@@ -22,6 +23,7 @@ function Navbar(props) {
           backgroundColor: "blue",
           color: "white",
           cursor: "pointer",
+          height: "3vh",
         }}
       >
         <Box>logo</Box>
@@ -41,7 +43,7 @@ function Navbar(props) {
       <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
         <Box
           style={{
-            width: "300px",
+            width: "350px",
             display: "flex",
             justifyContent: "center",
             flexDirection: "column",
@@ -55,25 +57,58 @@ function Navbar(props) {
             My Profile
           </Typography>
           <Avatar
-            sx={{ bgcolor: "orange", width: 150, height: 150, margin: "20px" }}
+            sx={{
+              bgcolor: "orange",
+              width: 150,
+              height: 150,
+              margin: "20px",
+              fontSize: "42px",
+            }}
           >
             A
           </Avatar>
-          <Box style={{ padding: "10px" }}>Name : Aditya Shankar Mishra</Box>
-          <Box style={{ padding: "10px" }}>Email : xyz@xyz.com</Box>
-          <Box style={{ padding: "10px" }}>Role : Student</Box>
-          <Box style={{ padding: "10px" }}>Contact : 983914718</Box>
+          <Box style={{ padding: "5px", textAlign: "center" }}>
+            Name : Aditya Shankar Mishra
+          </Box>
+          <Box style={{ padding: "5px", textAlign: "center" }}>
+            Email : xyz@xyz.com
+          </Box>
+          <Box style={{ padding: "5px", textAlign: "center" }}>
+            Role : Student
+          </Box>
+          <Box style={{ padding: "5px", textAlign: "center" }}>
+            Address : C22/74 Kabir Chaura, Varansi ggjgjgjjgjgjg
+          </Box>
+          <Box style={{ padding: "5px", textAlign: "center" }}>
+            Institute : C22/74 Kabir Chaura, Varansi ggjgjgjjgjgjg
+          </Box>
+          <Box style={{ padding: "5px", textAlign: "center" }}>
+            Contact : 983914718
+          </Box>
+          <Box style={{ padding: "5px", textAlign: "center" }}>
+            Class : xiii
+          </Box>
+          <Box style={{ padding: "5px", textAlign: "center" }}>
+            Rollno : 2017IMT005
+          </Box>
+          <Box style={{ padding: "5px", textAlign: "center" }}>
+            Expertise : Science, Maths
+          </Box>
           <Box
             style={{
               width: "55%",
               paddingTop: "10px",
               display: "flex",
               flexDirection: "row",
-              justifyContent: "space-between",
+              justifyContent: "center",
             }}
           >
-            <Button variant="outlined" color="secondary">
-              Edit
+            <Button
+              style={{ marginRight: "10px" }}
+              variant="outlined"
+              color="secondary"
+            >
+              Update
             </Button>
             <Button variant="contained" color="primary">
               Logout
