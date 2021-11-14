@@ -9,8 +9,8 @@ const testSchema = new Schema({
     required: true,
   },
   subject: { type: String, required: true },
-  startTime: { type: Date, default: Date.now },
-  endTime: { type: Date, default: Date.now },
+  startTime: { type: Date, required: true },
+  endTime: { type: Date, required: true },
   questions: [
     {
       type: mongoose.Schema.Types.ObjectId,

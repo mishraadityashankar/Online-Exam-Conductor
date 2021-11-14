@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Drawer,
   Typography,
@@ -7,7 +7,43 @@ import {
   Button,
   TextField,
 } from "@mui/material";
+
+import axios from "axios";
+function validateEmail(email) {
+  const re =
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
+
 function Home(props) {
+  const goToRegister = () => {
+    props.setLayout("register");
+  };
+  const [user, setUser] = useState({ email: "", password: "" });
+
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!validateEmail(user.email) || user.password === "") {
+      alert("Enter the valid data");
+    } else {
+      axios
+        .post("/user/login", user)
+        .then((res) => {
+          alert(res.data.message);
+          if (res.data.message === "success") {
+            localStorage.setItem("OEC_token", res.data.token);
+            props.setLayout("navbar");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
   return (
     <Box
       style={{
@@ -46,14 +82,49 @@ function Home(props) {
             justifyContent: "space-evenly",
           }}
         >
-          <TextField label="Email" fullWidth size="small" />
-          <TextField label="Password" fullWidth size="small" />
-          <Button variant="contained" fullWidth color="success">
-            Submit
+          <TextField
+            label="Email"
+            name="email"
+            value={user.email}
+            onChange={handleChange}
+            fullWidth
+            size="small"
+          />
+          <TextField
+            label="Password"
+            name="password"
+            value={user.password}
+            onChange={handleChange}
+            fullWidth
+            size="small"
+          />
+          <Button
+            variant="contained"
+            onClick={handleSubmit}
+            fullWidth
+            color="success"
+          >
+            Login
           </Button>
         </Box>
-        <Box>
-          Need an account? <a href="#">Sign up</a>
+
+        <Box
+          style={{
+            padding: "10px",
+          }}
+          onClick={goToRegister}
+          variant="p"
+        >
+          Need an account?{" "}
+          <span
+            style={{
+              cursor: "pointer",
+              textDecoration: "underline",
+              color: "blue",
+            }}
+          >
+            Sign up here
+          </span>
         </Box>
       </Box>
     </Box>

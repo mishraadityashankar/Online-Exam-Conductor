@@ -23,7 +23,6 @@ function Navbar(props) {
           backgroundColor: "blue",
           color: "white",
           cursor: "pointer",
-          height: "3vh",
         }}
       >
         <Box>logo</Box>
