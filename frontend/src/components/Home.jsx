@@ -36,7 +36,7 @@ function Home(props) {
           alert(res.data.message);
           if (res.data.message === "success") {
             localStorage.setItem("OEC_token", res.data.token);
-            props.setLayout("navbar");
+            props.setLayout("main");
           }
         })
         .catch((err) => {

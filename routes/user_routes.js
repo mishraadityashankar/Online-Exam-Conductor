@@ -59,6 +59,7 @@ router.post("/login", (req, res) => {
           if (result) {
             const token = jwt.sign(
               {
+                id: user[0]._id,
                 email: user[0].email,
                 role: user[0].role,
               },
@@ -110,7 +111,7 @@ router.get("/details/", checkauth, (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      res.status(200).json({ message: "Success", result: foundUser });
+      res.status(200).json({ message: "Success", result: foundUser[0] });
     }
   });
 });

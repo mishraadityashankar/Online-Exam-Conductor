@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Tests = require("../models/test_schema");
+const checkAuth = require("../utils/checkAuth");
 
 // get all
 router.get("/get", (req, res) => {
@@ -15,7 +16,7 @@ router.get("/get", (req, res) => {
 
 //post route
 
-router.post("/add", (req, res) => {
+router.post("/add", checkAuth, (req, res) => {
   Tests.create(req.body, (err, newlyCreatedTest) => {
     if (err) {
       console.log(err);

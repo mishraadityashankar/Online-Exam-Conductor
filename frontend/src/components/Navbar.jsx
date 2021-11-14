@@ -4,6 +4,11 @@ import React, { useState } from "react";
 
 function Navbar(props) {
   const [open, setOpen] = useState(false);
+  const userDetails = props.userDetails;
+  const handleLogout = () => {
+    localStorage.removeItem("OEC_token");
+    props.setLayout("home");
+  };
   const toggleDrawer = (open) => (event) => {
     if (
       event.type === "keydown" &&
@@ -13,31 +18,55 @@ function Navbar(props) {
     }
     setOpen(open);
   };
+
+  const handleBox1 = () => {
+    if (userDetails.role === "Student") {
+      console.log("Student");
+    } else {
+      props.setCurrPage("createQuestion");
+    }
+  };
+
+  const handleBox2 = () => {
+    if (userDetails.role === "Student") {
+      console.log("Student");
+    } else {
+      props.setCurrPage("createExam");
+    }
+  };
+
   return (
     <>
       <Box
         style={{
           display: "flex",
           justifyContent: "space-between",
-          padding: "20px",
-          backgroundColor: "blue",
+          padding: "10px",
+          backgroundColor: "#3399ff",
           color: "white",
           cursor: "pointer",
         }}
       >
-        <Box>logo</Box>
+        <Box style={{ fontSize: "28px", fontWeight: "bold" }}>
+          Online Exam Conductor
+        </Box>
         <Box
           style={{
             display: "flex",
+            alignItems: "center",
             justifyContent: "space-around",
-            width: "25%",
+            width: "30%",
           }}
         >
-          <Box type="button">Register</Box>
-          <Box>Exam List</Box>
-          <Box>Grades</Box>
+          <Box onClick={() => props.setLayout("register")}>Register</Box>
+          <Box onClick={handleBox1}>
+            {userDetails.role === "Student" ? "Exam List" : "Create Question"}
+          </Box>
+          <Box onClick={handleBox2}>
+            {userDetails.role === "Student" ? "My Grades" : "Create Exam"}
+          </Box>
+          <Box onClick={toggleDrawer(true)}>Profile</Box>
         </Box>
-        <Box onClick={toggleDrawer(true)}>login</Box>
       </Box>
       <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
         <Box
@@ -67,32 +96,39 @@ function Navbar(props) {
             A
           </Avatar>
           <Box style={{ padding: "5px", textAlign: "center" }}>
-            Name : Aditya Shankar Mishra
+            Name : {userDetails.name}
           </Box>
           <Box style={{ padding: "5px", textAlign: "center" }}>
-            Email : xyz@xyz.com
+            Email : {userDetails.email}
           </Box>
           <Box style={{ padding: "5px", textAlign: "center" }}>
-            Role : Student
+            Role : {userDetails.role}
           </Box>
           <Box style={{ padding: "5px", textAlign: "center" }}>
-            Address : C22/74 Kabir Chaura, Varansi ggjgjgjjgjgjg
+            Address : {userDetails.address}
           </Box>
           <Box style={{ padding: "5px", textAlign: "center" }}>
-            Institute : C22/74 Kabir Chaura, Varansi ggjgjgjjgjgjg
+            Institute : {userDetails.institute}
           </Box>
           <Box style={{ padding: "5px", textAlign: "center" }}>
-            Contact : 983914718
+            Contact : {userDetails.contact}
           </Box>
-          <Box style={{ padding: "5px", textAlign: "center" }}>
-            Class : xiii
-          </Box>
-          <Box style={{ padding: "5px", textAlign: "center" }}>
-            Rollno : 2017IMT005
-          </Box>
-          <Box style={{ padding: "5px", textAlign: "center" }}>
-            Expertise : Science, Maths
-          </Box>
+          {userDetails.role === "Student" ? (
+            <>
+              {" "}
+              <Box style={{ padding: "5px", textAlign: "center" }}>
+                Class : {userDetails.class}
+              </Box>
+              <Box style={{ padding: "5px", textAlign: "center" }}>
+                Rollno : {userDetails.rollNo}
+              </Box>{" "}
+            </>
+          ) : (
+            <Box style={{ padding: "5px", textAlign: "center" }}>
+              Expertise : {userDetails.expertise}
+            </Box>
+          )}
+
           <Box
             style={{
               width: "55%",
@@ -106,10 +142,11 @@ function Navbar(props) {
               style={{ marginRight: "10px" }}
               variant="outlined"
               color="secondary"
+              onClick={() => props.setCurrPage("editProfile")}
             >
               Update
             </Button>
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={handleLogout}>
               Logout
             </Button>
           </Box>
