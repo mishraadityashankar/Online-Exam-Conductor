@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import CreateExam from "./CreateExam";
 import CreateQuestion from "./CreateQuestion";
 import EditProfile from "./EditProfile";
+import ExamDetail from "./ExamDetail";
+import ExamList from "./ExamList";
 import Navbar from "./Navbar";
 
 function ContentArea(props) {
@@ -53,6 +55,24 @@ function ContentArea(props) {
           userDetails={userDetails}
           token={token}
         ></EditProfile>
+      );
+    } else if (currPage === "examList") {
+      return (
+        <ExamList
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          setCurrPage={setCurrPage}
+        ></ExamList>
+      );
+    } else if (currPage === "examDetails") {
+      return (
+        <ExamDetail
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          setCurrPage={setCurrPage}
+        ></ExamDetail>
       );
     } else return <></>;
   };

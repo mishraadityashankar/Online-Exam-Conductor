@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ContentArea from "./ContentArea";
+import ExamWindow from "./ExamWindow";
 import Home from "./Home";
 import Navbar from "./Navbar";
 import Register from "./Register";
@@ -15,6 +16,8 @@ function MainLayout(props) {
       return <Register setLayout={setLayout} layout={layout}></Register>;
     } else if (layout === "main") {
       return <ContentArea setLayout={setLayout} layout={layout}></ContentArea>;
+    } else if (layout === "examWindow") {
+      return <ExamWindow setLayout={setLayout} layout={layout}></ExamWindow>;
     }
   };
   return <div>{renderLayout()}</div>;
