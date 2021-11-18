@@ -6,6 +6,10 @@ const responsesSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Test",
   },
+  testName: {
+    type: String,
+    default: "N/A",
+  },
   studentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

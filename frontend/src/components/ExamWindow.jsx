@@ -120,10 +120,18 @@ function ExamWindow(props) {
     const boolAnswerString = answers.map((ele) => ele.toString());
     console.log(boolAnswerString);
     axios
-      .post("/responses/generateResult", {
-        responsesId: props.responsesId,
-        answers: boolAnswerString,
-      })
+      .post(
+        "/responses/saveResult",
+        {
+          responsesId: props.responsesId,
+          answers: boolAnswerString,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("OEC_token"),
+          },
+        }
+      )
       .then((res) => {
         alert(res.data.message);
       })

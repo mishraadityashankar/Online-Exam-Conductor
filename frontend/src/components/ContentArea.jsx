@@ -6,11 +6,13 @@ import EditProfile from "./EditProfile";
 import ExamDetail from "./ExamDetail";
 import ExamList from "./ExamList";
 import Navbar from "./Navbar";
+import ResponsesList from "./ResponsesList";
 import ResultHistory from "./ResultHistory";
 
 function ContentArea(props) {
   const [userDetails, setUserDetails] = useState(null);
   const [currPage, setCurrPage] = useState("createExam");
+  const [curResponses, setCurResponses] = useState(null);
   const token = localStorage.getItem("OEC_token");
   useEffect(() => {
     axios
@@ -83,6 +85,19 @@ function ContentArea(props) {
       );
     } else if (currPage === "resultHistory") {
       return (
+        <ResponsesList
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
+          setCurrPage={setCurrPage}
+          curResponses={curResponses}
+          setCurResponses={setCurResponses}
+        ></ResponsesList>
+      );
+    } else if (currPage === "singleResponses") {
+      return (
         <ResultHistory
           setLayout={props.setLayout}
           userDetails={userDetails}
@@ -90,6 +105,8 @@ function ContentArea(props) {
           selectedTest={props.selectedTest}
           setSelectedTest={props.setSelectedTest}
           setCurrPage={setCurrPage}
+          curResponses={curResponses}
+          setCurResponses={setCurResponses}
         ></ResultHistory>
       );
     } else return <></>;

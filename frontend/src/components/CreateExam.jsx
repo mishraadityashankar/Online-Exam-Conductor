@@ -111,7 +111,7 @@ function CreateExam(props) {
   const deleteQuestion = (id) => {
     let newtotal = 0;
     selectedQuestions.map((ele, ind) => {
-      if (ind != id) newtotal += ele.marks;
+      if (ind !== id) newtotal += ele.marks;
       return;
     });
     let updatedQuestions = selectedQuestions.filter(
@@ -390,12 +390,7 @@ function CreateExam(props) {
                   <Typography className={classes.paragraph}>
                     <span>Option A:</span> {curQuestion.option_A}
                   </Typography>
-                  {/* <Box>
-      <FormControlLabel
-        label="Option A"
-        control={<Checkbox name="jason" />}
-      />
-    </Box> */}
+
                   <Typography className={classes.paragraph}>
                     <span>Option B:</span> {curQuestion.option_B}
                   </Typography>

@@ -5,12 +5,17 @@ const checkAuth = require("../utils/checkAuth");
 const Questions = require("../models/question_schema");
 
 // get all
-router.get("/get", checkAuth, (req, res) => {
-  Responses.find({}, (err, totalResponses) => {
+router.get("/getByUser", checkAuth, (req, res) => {
+  Responses.find({ studentId: req.userData.id }, (err, totalResponses) => {
     if (err) {
-      console.log("error");
+      return res.status(404).json({ message: "Cannot get responses list" });
     } else {
-      res.status(200).json({ message: "Success", result: totalResponses });
+      if (totalResponses.length < 1)
+        return res.status(200).json({ message: "No Responses" });
+      return res.status(200).json({
+        message: "Success",
+        result: totalResponses,
+      });
     }
   });
 });
@@ -50,14 +55,21 @@ router.post("/create", checkAuth, (req, res) => {
 });
 
 // get details
-router.get("/details/:id", (req, res) => {
-  Responses.findById(req.params.id, (err, foundQuestion) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.status(200).json({ message: "Success", result: foundQuestion });
-    }
-  });
+router.get("/details/:responsesId", checkAuth, (req, res) => {
+  Responses.findById(req.params.responsesId)
+    .populate("questions")
+    .exec((err, detailedResponses) => {
+      if (err) {
+        console.log(err);
+        return res.status(404).json({ message: "Failed to get details" });
+      } else if (detailedResponses.studentId === req.userData.id) {
+        return res.status(401).json({ message: "Unauthorized" });
+      } else {
+        return res
+          .status(200)
+          .json({ message: "Success", result: detailedResponses });
+      }
+    });
 });
 
 router.post("/update", checkAuth, (req, res) => {
@@ -75,7 +87,7 @@ router.post("/update", checkAuth, (req, res) => {
   );
 });
 
-router.post("/generateResult", (req, res) => {
+router.post("/saveResult", checkAuth, (req, res) => {
   // responsesId , answers, passingMarks from body
   Responses.findById(req.body.responsesId)
     .populate("questions")
@@ -93,7 +105,7 @@ router.post("/generateResult", (req, res) => {
           return;
         });
         let passed =
-          scoresObtained >= detailedResponses.qpassingMarks ? true : false;
+          scoresObtained >= detailedResponses.passingMarks ? true : false;
 
         Responses.findByIdAndUpdate(
           req.body.responsesId,

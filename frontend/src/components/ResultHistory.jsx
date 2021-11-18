@@ -53,30 +53,21 @@ const useStyles = makeStyles({
 });
 function ResultHistory(props) {
   const classes = useStyles();
-  const selectedTest = props.selectedTest;
-  const userDetails = props.userDetails;
-  const [selectedTestDetails, setSelectedTestDetails] = useState([]);
 
-  //   useEffect(() => {
-  //     axios
-  //       .get("/test/details/" + selectedTest._id, {
-  //         headers: {
-  //           Authorization: "Bearer " + localStorage.getItem("OEC_token"),
-  //         },
-  //       })
-  //       .then((res) => {
-  //         if (res.data.message === "Success") {
-  //           setSelectedTestDetails(res.data.result);
-  //           console.log(res.data);
-  //         } else {
-  //           alert(res.data.message);
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //         props.setLayout("home");
-  //       });
-  //   }, []);
+  const selectedResponses = props.curResponses;
+
+  const formatAnswer = (answerArray) => {
+    let ans = " ";
+    answerArray.map((ele, ind) => {
+      if (ele) ans += String.fromCharCode(65 + ind) + " ";
+    });
+    return ans;
+  };
+
+  const formatMarkedAnswer = (responseString) => {
+    const responseArr = responseString.split(",").map((ele) => ele === "true");
+    return formatAnswer(responseArr);
+  };
 
   //   useEffect(() => {
   //     console.log(document.fullscreenElement);
@@ -86,6 +77,10 @@ function ResultHistory(props) {
   //   }, [document.fullscreenElement]);
   const handleFullScreen = () => {
     document.documentElement.requestFullscreen().catch((e) => console.log(e));
+  };
+  const handleSelection = (e) => {
+    // setSelectedResponses(e.target.value);
+    // console.log(e.target.id);
   };
 
   return (
@@ -101,58 +96,56 @@ function ResultHistory(props) {
               boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
             }}
           >
-            <Typography
-              style={{
-                marginTop: "10px",
-                marginBottom: "20px",
-                fontSize: "32px",
-                fontWeight: "bold",
-              }}
-            >
-              My Profile
-            </Typography>
-            <Box
-              style={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <Avatar
-                sx={{
-                  bgcolor: "orange",
-                  width: 150,
-                  height: 150,
-                  margin: "20px",
-                  fontSize: "42px",
-                }}
-              >
-                A
-              </Avatar>
-            </Box>
-            <Box
-              style={{
-                display: "flex",
-                justifyContent: "space-evenly",
-                flexDirection: "column",
-              }}
-            >
-              <Typography className={classes.formElement}>
-                TestName: XYZ
-              </Typography>
-              <Typography className={classes.formElement}>
-                Total Marks: 80
-              </Typography>
-              <Typography className={classes.formElement}>
-                Marks Obtained: 50
-              </Typography>
-              <Typography className={classes.formElement}>
-                Status: Pass
-              </Typography>
-              <Typography className={classes.formElement}>
-                Remarks: Do well next time
-              </Typography>
-              <Typography className={classes.formElement}>Responses</Typography>
-            </Box>
+            {selectedResponses ? (
+              <Grid container spacing={2}>
+                <Grid item xs={6} sm={6} md={12} lg={12} xl={12}>
+                  <Box style={{ textAlign: "left" }}>
+                    <Typography className={classes.formElement}>
+                      TestName: {selectedResponses.testName}
+                    </Typography>
+                    <Typography className={classes.formElement}>
+                      Date: {selectedResponses.finishTime}
+                    </Typography>
+                    <Typography className={classes.formElement}>
+                      Total Marks: {selectedResponses.totalMarks}
+                    </Typography>
+                    <Typography className={classes.formElement}>
+                      Marks Obtained: {selectedResponses.scoresObtained}
+                    </Typography>
+                    <Typography className={classes.formElement}>
+                      Status: {selectedResponses.passed?.toString()}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={6} sm={6} md={12} lg={12} xl={12}>
+                  <Box>
+                    <PieChart
+                      data={[
+                        {
+                          title: "Correct",
+                          value: selectedResponses.scoresObtained,
+                          color: "#4acf50",
+                        },
+                        {
+                          title: "Wrong",
+                          value:
+                            selectedResponses.totalMarks -
+                            selectedResponses.scoresObtained,
+                          color: "#ff4040",
+                        },
+                      ]}
+                      label={({ dataEntry }) => {
+                        console.log(dataEntry);
+                        return `${Math.round(dataEntry.percentage)} %`;
+                      }}
+                      radius={40}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
+            ) : (
+              <Box>Select Exam</Box>
+            )}
           </Box>
         </Grid>
         <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
@@ -178,148 +171,124 @@ function ResultHistory(props) {
               >
                 Results
               </Typography>
-              <TextField
+
+              {/* <TextField
                 id="outlined-select-currency"
                 select
                 sx={{ width: "50%", margin: "10px" }}
-                label="Select question"
+                label="Select Exam"
                 size="small"
-                // value={pickedQuestion}
-                //onChange={handleSelection}
+                value={selectedResponses.testName}
+                onChange={handleSelection}
               >
-                {["", "", ""].map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {"ioioioioioioioiooioioioioioioio"}
+                {responsesList.map((option, ele) => (
+                  <MenuItem id={option.testName} key={option} value={option}>
+                    {option.testName}
                   </MenuItem>
                 ))}
-              </TextField>
+              </TextField> */}
+              <Button onClick={() => props.setCurrPage("resultHistory")}>
+                Back
+              </Button>
             </Box>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                <Grid container spacing={2}>
-                  <Grid item xs={6} sm={6} md={6} lg={12} xl={12}>
-                    <Box style={{ textAlign: "left" }}>
-                      <Typography className={classes.formElement}>
-                        TestName: XYZ
-                      </Typography>
-                      <Typography className={classes.formElement}>
-                        Date: 27/11/10
-                      </Typography>
-                      <Typography className={classes.formElement}>
-                        Total Marks: 80
-                      </Typography>
-                      <Typography className={classes.formElement}>
-                        Marks Obtained: 50
-                      </Typography>
-                      <Typography className={classes.formElement}>
-                        Status: Pass
-                      </Typography>
-                    </Box>
-                  </Grid>
-                  <Grid item xs={6} sm={6} md={6} lg={12} xl={12}>
-                    <Box>
-                      <PieChart
-                        data={[
-                          { title: "Correct", value: 10, color: "#4acf50" },
-                          { title: "Wrong", value: 15, color: "#ff4040" },
-                        ]}
-                        label={({ dataEntry }) => {
-                          console.log(dataEntry);
-                          return `${Math.round(dataEntry.percentage)} %`;
-                        }}
-                        radius={40}
-                      />
-                    </Box>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
-                <Box
-                  style={{
-                    height: "400px",
-                    overflow: "auto",
-                    padding: "10px",
-                    textAlign: "left",
-                  }}
-                >
-                  {["", "", "", "", "", ""].map((ele, ind) => (
-                    <Accordion
-                      style={{
-                        margin: "5px",
-                        boxShadow: "0 4px 4px 0 rgb(0 0 0 / 20%)",
-                      }}
-                    >
-                      <AccordionSummary
-                        style={{ backgroundColor: "#F8F8F8" }}
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                      >
-                        <Grid container spacing={2}>
-                          <Grid item xs={6}>
-                            <Typography
-                              style={{
-                                padding: "5px",
-                                fontWeight: "bold",
-                                fontSize: "18px",
-                              }}
-                            >
-                              {ind + 1 + " "}. {ele.questionName}
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={6}>
-                            <Typography
-                              style={{
-                                textAlign: "right",
-                                padding: "5px",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              Marks: {ele.marks}
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography style={{ padding: "10px" }}>
-                          Ut enim ad minim veniam, quis nostrud exercitation
-                          ullamco laboris nisi ut aliquip ex ea commodo
-                          consequat. Duis aute irure dolor in reprehenderit in
-                          voluptate velit esse cillum dolore eu fugiat nulla
-                          pariatur. Excepteur sint occaecat cupidatat non
-                          proident, sunt in culpa qui officia deserunt mollit
-                          anim id est laborum
-                          {ele.problemStatement}
-                        </Typography>
-                        <Box>
-                          <Box>
-                            <Typography variant="p">
-                              <span>A: </span> {ele.option_A}
-                            </Typography>
-                          </Box>
-                          <Box>
-                            <Typography variant="p">
-                              <span>B:</span> {ele.option_B}
-                            </Typography>
-                          </Box>
-                          <Box>
-                            <Typography variant="p">
-                              <span>C:</span> {ele.option_C}
-                            </Typography>
-                          </Box>
 
-                          <Box>
-                            <Typography variant="p">
-                              <span>D:</span> {ele.option_D}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </AccordionDetails>
-                    </Accordion>
-                  ))}
-                </Box>
-              </Grid>
-            </Grid>
+            <Box
+              style={{
+                height: "400px",
+                overflow: "auto",
+                padding: "10px",
+                textAlign: "left",
+              }}
+            >
+              {selectedResponses && selectedResponses.questions.length ? (
+                selectedResponses.questions.map((curQuestion, ind) => (
+                  <Accordion
+                    style={{
+                      margin: "5px",
+                      boxShadow: "0 4px 4px 0 rgb(0 0 0 / 20%)",
+                    }}
+                  >
+                    <AccordionSummary
+                      style={{ backgroundColor: "#F8F8F8" }}
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                          <Typography
+                            style={{
+                              padding: "5px",
+                              fontWeight: "bold",
+                              fontSize: "18px",
+                            }}
+                          >
+                            {ind + 1 + " "}. {curQuestion.questionName}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography
+                            style={{
+                              textAlign: "right",
+                              padding: "5px",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Marks: {curQuestion.marks}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Divider light />
+                      <Box style={{ textAlign: "left", padding: "5px" }}>
+                        <Typography className={classes.paragraph}>
+                          {curQuestion.problemStatement}
+                        </Typography>
+                        <Divider light />
+                        <Typography className={classes.paragraph}>
+                          <span>Option A:</span> {curQuestion.option_A}
+                        </Typography>
+
+                        <Typography className={classes.paragraph}>
+                          <span>Option B:</span> {curQuestion.option_B}
+                        </Typography>
+                        <Typography className={classes.paragraph}>
+                          <span>Option C:</span> {curQuestion.option_C}
+                        </Typography>
+                        <Typography className={classes.paragraph}>
+                          <span>Option D:</span> {curQuestion.option_D}
+                        </Typography>
+                        <Divider light />
+                        <Typography className={classes.paragraph}>
+                          <span>Correct Anwers:</span>
+                          {formatAnswer(curQuestion.answer)}
+                        </Typography>
+                        <Divider light />
+                        <Typography className={classes.paragraph}>
+                          <span>Marked Anwers:</span>
+                          {formatMarkedAnswer(
+                            selectedResponses.recordedAnswers[ind]
+                          )}
+                          {/* {formatAnswer(
+                                selectedResponses.recordedAnswers[ind].split(
+                                  ","
+                                )
+                              )} */}
+                        </Typography>
+                        <Divider light />
+                        <Typography className={classes.paragraph}>
+                          <span>Explanation: </span> {curQuestion.explanation}
+                        </Typography>
+                        <Divider light />
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
+                ))
+              ) : (
+                <Box>Select Exam</Box>
+              )}
+            </Box>
           </Box>
         </Grid>
       </Grid>

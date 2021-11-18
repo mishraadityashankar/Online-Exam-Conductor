@@ -63,6 +63,7 @@ function ExamDetail(props) {
   const classes = useStyles();
   const newResponses = {
     testId: props.selectedTest._id,
+    testName: props.selectedTest.testName,
     studentId: props.userDetails._id,
     questions: props.selectedTest.questions,
     totalMarks: props.selectedTest.totalMarks,
