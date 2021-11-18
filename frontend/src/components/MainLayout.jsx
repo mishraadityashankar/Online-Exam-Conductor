@@ -9,15 +9,36 @@ function MainLayout(props) {
   const initialPage = localStorage.getItem("OEC_token") ? "main" : "home";
 
   const [layout, setLayout] = useState(initialPage);
+  const [selectedTest, setSelectedTest] = useState(null);
+  const [responsesId, setResponsesId] = useState(null);
+
   const renderLayout = () => {
     if (layout === "home") {
       return <Home setLayout={setLayout} layout={layout}></Home>;
     } else if (layout === "register") {
       return <Register setLayout={setLayout} layout={layout}></Register>;
     } else if (layout === "main") {
-      return <ContentArea setLayout={setLayout} layout={layout}></ContentArea>;
+      return (
+        <ContentArea
+          selectedTest={selectedTest}
+          setSelectedTest={setSelectedTest}
+          setLayout={setLayout}
+          layout={layout}
+          responsesId={responsesId}
+          setResponsesId={setResponsesId}
+        ></ContentArea>
+      );
     } else if (layout === "examWindow") {
-      return <ExamWindow setLayout={setLayout} layout={layout}></ExamWindow>;
+      return (
+        <ExamWindow
+          selectedTest={selectedTest}
+          setSelectedTest={setSelectedTest}
+          setLayout={setLayout}
+          responsesId={responsesId}
+          setResponsesId={setResponsesId}
+          layout={layout}
+        ></ExamWindow>
+      );
     }
   };
   return <div>{renderLayout()}</div>;

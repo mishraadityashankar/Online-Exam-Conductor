@@ -17,7 +17,10 @@
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.2",
     "react-dom": "^17.0.2",
+    "react-google-charts": "^3.0.15",
+    "react-minimal-pie-chart": "^8.2.0",
     "react-scripts": "4.0.3",
+    "react-timer-hook": "^3.0.5",
     "web-vitals": "^1.0.1"
   },
   "scripts": {

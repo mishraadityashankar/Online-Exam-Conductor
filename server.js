@@ -6,6 +6,7 @@ const app = express();
 const user_route = require("./routes/user_routes");
 const test_route = require("./routes/test_route");
 const question_route = require("./routes/question_route");
+const responses_route = require("./routes/responses_route");
 const dotenv = require("dotenv");
 
 ////middle ware set up
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/user", user_route);
 app.use("/test", test_route);
 app.use("/question", question_route);
+app.use("/responses", responses_route);
 
 ///// static rendering starts here ....
 

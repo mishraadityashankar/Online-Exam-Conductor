@@ -29,7 +29,7 @@ function Navbar(props) {
 
   const handleBox2 = () => {
     if (userDetails.role === "Student") {
-      console.log("Student");
+      props.setCurrPage("resultHistory");
     } else {
       props.setCurrPage("createExam");
     }

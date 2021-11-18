@@ -95,6 +95,7 @@ function CreateQuestion(props) {
       .then((res) => {
         console.log(res.data);
         alert(res.data.message);
+        setQuestion(initialQuestion);
       })
       .catch((err) => {
         console.log(err);

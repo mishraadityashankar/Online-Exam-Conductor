@@ -24,6 +24,7 @@ const testSchema = new Schema({
       ref: "User",
     },
   ],
+  passingMarks: { type: Number, required: true },
   expired: { type: Boolean, default: true },
 });
 module.exports = mongoose.model("Test", testSchema);

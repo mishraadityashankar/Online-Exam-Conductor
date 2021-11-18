@@ -1,11 +1,39 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import moment from "moment";
 
 function ExamList(props) {
+  const [testList, setTestList] = useState([]);
+  useEffect(() => {
+    axios
+      .get("/test/get", {
+        headers: {
+          Authorization: "Bearer " + props.token,
+        },
+      })
+      .then((res) => {
+        if (res.data.message === "Success") {
+          setTestList(res.data.result);
+          console.log(res.data);
+        } else {
+          alert(res.data.message);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        props.setLayout("home");
+      });
+  }, []);
+
+  const handleEnter = (curTest) => {
+    props.setSelectedTest(curTest);
+    props.setCurrPage("examDetails");
+  };
   return (
     <Box style={{ padding: "20px", textAlign: "left" }}>
       <Grid container spacing={2}>
-        {["", "", ""].map((ele) => (
+        {testList.map((ele) => (
           <Grid item xs={12} sm={6} md={6} lg={4} xl={4}>
             <Box
               style={{
@@ -16,31 +44,30 @@ function ExamList(props) {
               }}
             >
               <Typography style={{ fontSize: "24px", marginBottom: "20px" }}>
-                Test Name : XYZ
+                Test Name : {ele.testName}
               </Typography>
               <Grid container spacing={2} style={{ marginBottom: "20px" }}>
                 <Grid item xs={6}>
-                  <Typography>Subject: English</Typography>
+                  <Typography>Subject: {ele.subject}</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography>Date: 25/89/190</Typography>
+                  <Typography>Date: {ele.startDate}</Typography>
                 </Grid>
               </Grid>
 
               <Grid container spacing={2} style={{ marginBottom: "20px" }}>
                 <Grid item xs={6}>
-                  <Typography>Time: 5:40</Typography>
+                  <Typography>Time: {ele.startDate}</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography></Typography>
-                  Duration: 45 min
+                  <Typography>Duration: 45 min</Typography>
                 </Grid>
               </Grid>
               <Button
                 //className={classes.btn}
                 variant="contained"
                 color="primary"
-                onClick={() => props.setCurrPage("examDetails")}
+                onClick={() => handleEnter(ele)}
                 // onClick={() => deleteQuestion(ind)}
               >
                 Enter

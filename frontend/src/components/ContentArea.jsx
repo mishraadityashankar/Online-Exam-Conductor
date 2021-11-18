@@ -6,6 +6,7 @@ import EditProfile from "./EditProfile";
 import ExamDetail from "./ExamDetail";
 import ExamList from "./ExamList";
 import Navbar from "./Navbar";
+import ResultHistory from "./ResultHistory";
 
 function ContentArea(props) {
   const [userDetails, setUserDetails] = useState(null);
@@ -62,6 +63,8 @@ function ContentArea(props) {
           setLayout={props.setLayout}
           userDetails={userDetails}
           token={token}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
           setCurrPage={setCurrPage}
         ></ExamList>
       );
@@ -71,8 +74,23 @@ function ContentArea(props) {
           setLayout={props.setLayout}
           userDetails={userDetails}
           token={token}
+          responsesId={props.responsesId}
+          setResponsesId={props.setResponsesId}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
           setCurrPage={setCurrPage}
         ></ExamDetail>
+      );
+    } else if (currPage === "resultHistory") {
+      return (
+        <ResultHistory
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
+          setCurrPage={setCurrPage}
+        ></ResultHistory>
       );
     } else return <></>;
   };
