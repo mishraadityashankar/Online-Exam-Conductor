@@ -2,6 +2,7 @@ import { Box, Button, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
+import { getAutoHeightDuration } from "@mui/material/styles/createTransitions";
 
 function ExamList(props) {
   const [testList, setTestList] = useState([]);
@@ -14,7 +15,10 @@ function ExamList(props) {
       })
       .then((res) => {
         if (res.data.message === "Success") {
-          setTestList(res.data.result);
+          const curDateTime = new Date();
+          setTestList(
+            res.data.result.filter((ele) => new Date(ele.endTime) > curDateTime)
+          );
           console.log(res.data);
         } else {
           alert(res.data.message);
@@ -29,6 +33,13 @@ function ExamList(props) {
   const handleEnter = (curTest) => {
     props.setSelectedTest(curTest);
     props.setCurrPage("examDetails");
+  };
+
+  const getDuration = (startTime, endTime) => {
+    let m1 = moment(startTime);
+    let m2 = moment(endTime);
+    let m3 = m2.diff(m1, "minutes");
+    return m3 + " minutes";
   };
   return (
     <Box style={{ padding: "20px", textAlign: "left" }}>
@@ -51,16 +62,22 @@ function ExamList(props) {
                   <Typography>Subject: {ele.subject}</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography>Date: {ele.startDate}</Typography>
+                  <Typography>
+                    Start Date: {moment(ele.startTime).format("YYYY-MM-DD")}
+                  </Typography>
                 </Grid>
               </Grid>
 
               <Grid container spacing={2} style={{ marginBottom: "20px" }}>
                 <Grid item xs={6}>
-                  <Typography>Time: {ele.startDate}</Typography>
+                  <Typography>
+                    Start Time: {moment(ele.startTime).format("HH:mm")}
+                  </Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography>Duration: 45 min</Typography>
+                  <Typography>
+                    Duration: {getDuration(ele.startTime, ele.endTime)}
+                  </Typography>
                 </Grid>
               </Grid>
               <Button

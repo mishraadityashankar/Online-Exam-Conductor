@@ -56,7 +56,10 @@ function ContentArea(props) {
         <EditProfile
           setLayout={props.setLayout}
           userDetails={userDetails}
+          setUserDetails={setUserDetails}
           token={token}
+          currPage={currPage}
+          setCurrPage={setCurrPage}
         ></EditProfile>
       );
     } else if (currPage === "examList") {

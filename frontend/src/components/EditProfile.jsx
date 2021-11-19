@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Drawer,
   Typography,
@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 
 import { makeStyles } from "@mui/styles";
+import axios from "axios";
 
 const useStyles = makeStyles({
   root: {
@@ -41,7 +42,32 @@ const useStyles = makeStyles({
 
 function EditProfile(props) {
   const classes = useStyles();
-  const role = "student";
+  const userDetails = props.userDetails;
+  const intialState = {
+    ...userDetails,
+  };
+
+  const [user, setUser] = useState(intialState);
+  const handleChange = (e) => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleUpdate = (e) => {
+    axios
+      .post("/user/update", user, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("OEC_token"),
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        alert(res.data.message);
+        props.setUserDetails(user);
+        props.setCurrPage("createExam");
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <Box className={classes.root}>
       <Card className={classes.card}>
@@ -72,13 +98,13 @@ function EditProfile(props) {
                   margin: "20px",
                 }}
               >
-                A
+                {user.name[0]}
               </Avatar>
               <Box style={{ fontSize: "18px", padding: "5px" }}>
-                Email : xyz@xyz.com
+                Email : {userDetails.email}
               </Box>
               <Box style={{ fontSize: "18px", padding: "5px" }}>
-                Role : teacher
+                Role : {userDetails.role}
               </Box>
             </Box>
 
@@ -96,40 +122,94 @@ function EditProfile(props) {
                 label="Name"
                 fullWidth
                 size="small"
+                name="name"
+                value={user.name}
+                onChange={handleChange}
               />
               <TextField
                 style={{ marginBottom: "20px" }}
                 label="Contact"
                 fullWidth
                 size="small"
+                name="contact"
+                value={user.contact}
+                onChange={handleChange}
               />
-              <Box
-                style={{
-                  width: "100%",
-                  marginBottom: "20px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
-                <TextField label="Class" type="Name" size="small" />
-                <TextField label="Roll No" type="Name" size="small" />
-              </Box>
-
-              <TextField label="Expertise" fullWidth size="small" />
+              {userDetails.role === "Student" && (
+                <Box
+                  style={{
+                    width: "100%",
+                    marginBottom: "20px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <TextField
+                    label="Class"
+                    type="Name"
+                    size="small"
+                    name="class"
+                    value={user.class}
+                    onChange={handleChange}
+                  />
+                  <TextField
+                    label="Roll No"
+                    type="Name"
+                    size="small"
+                    name="rollNo"
+                    value={user.rollNo}
+                    onChange={handleChange}
+                  />
+                </Box>
+              )}
+              {userDetails.role === "Faculty" && (
+                <TextField
+                  label="Expertise"
+                  fullWidth
+                  size="small"
+                  name="expertise"
+                  value={user.expertise}
+                  onChange={handleChange}
+                />
+              )}
             </Box>
           </Box>
           <Box className={classes.formElement}>
-            <TextField label="Address" fullWidth size="small" />
+            <TextField
+              label="Address"
+              fullWidth
+              size="small"
+              name="address"
+              value={user.address}
+              onChange={handleChange}
+            />
           </Box>
           <Box className={classes.formElement}>
-            <TextField label="Institute" fullWidth size="small" />
+            <TextField
+              label="Institute"
+              fullWidth
+              size="small"
+              name="institute"
+              value={user.institute}
+              onChange={handleChange}
+            />
           </Box>
-          <Box className={classes.formElement}></Box>
+
           <Box>
-            <Button className={classes.btn} variant="outlined" color="success">
+            <Button
+              className={classes.btn}
+              onClick={() => props.setCurrPage("createExam")}
+              variant="outlined"
+              color="success"
+            >
               Cancel
             </Button>
-            <Button className={classes.btn} variant="contained" color="success">
+            <Button
+              className={classes.btn}
+              onClick={handleUpdate}
+              variant="contained"
+              color="success"
+            >
               Update
             </Button>
           </Box>

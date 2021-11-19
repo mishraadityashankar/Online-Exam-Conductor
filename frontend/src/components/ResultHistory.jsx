@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-google-charts";
 import { PieChart } from "react-minimal-pie-chart";
+import { VictoryPie } from "victory-pie";
+import moment from "moment";
+
 import {
   Box,
   Button,
@@ -55,7 +58,7 @@ function ResultHistory(props) {
   const classes = useStyles();
 
   const selectedResponses = props.curResponses;
-
+  console.log(selectedResponses);
   const formatAnswer = (answerArray) => {
     let ans = " ";
     answerArray.map((ele, ind) => {
@@ -65,6 +68,8 @@ function ResultHistory(props) {
   };
 
   const formatMarkedAnswer = (responseString) => {
+    console.log(responseString);
+
     const responseArr = responseString.split(",").map((ele) => ele === "true");
     return formatAnswer(responseArr);
   };
@@ -82,7 +87,16 @@ function ResultHistory(props) {
     // setSelectedResponses(e.target.value);
     // console.log(e.target.id);
   };
-
+  const myData = [
+    {
+      x: "Correct",
+      y: selectedResponses.scoresObtained,
+    },
+    {
+      x: "Wrong",
+      y: selectedResponses.totalMarks - selectedResponses.scoresObtained,
+    },
+  ];
   return (
     <Box
       style={{ padding: "20px", backgroundColor: "#EBF2F8", height: "90vh" }}
@@ -100,11 +114,25 @@ function ResultHistory(props) {
               <Grid container spacing={2}>
                 <Grid item xs={6} sm={6} md={12} lg={12} xl={12}>
                   <Box style={{ textAlign: "left" }}>
-                    <Typography className={classes.formElement}>
-                      TestName: {selectedResponses.testName}
+                    <Typography
+                      className={classes.formElement}
+                      style={{
+                        fontSize: "26px",
+                        fontWeight: "bold",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Results
                     </Typography>
                     <Typography className={classes.formElement}>
-                      Date: {selectedResponses.finishTime}
+                      Date:{" "}
+                      {moment(selectedResponses.finishTime).format(
+                        "YYYY-MM-DD"
+                      )}
+                    </Typography>
+                    <Typography className={classes.formElement}>
+                      Finish Time:{" "}
+                      {moment(selectedResponses.finishTime).format("HH:mm:ss")}
                     </Typography>
                     <Typography className={classes.formElement}>
                       Total Marks: {selectedResponses.totalMarks}
@@ -113,32 +141,16 @@ function ResultHistory(props) {
                       Marks Obtained: {selectedResponses.scoresObtained}
                     </Typography>
                     <Typography className={classes.formElement}>
-                      Status: {selectedResponses.passed?.toString()}
+                      Status: {selectedResponses.passed ? "Passed" : "Failed"}
                     </Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={6} sm={6} md={12} lg={12} xl={12}>
                   <Box>
-                    <PieChart
-                      data={[
-                        {
-                          title: "Correct",
-                          value: selectedResponses.scoresObtained,
-                          color: "#4acf50",
-                        },
-                        {
-                          title: "Wrong",
-                          value:
-                            selectedResponses.totalMarks -
-                            selectedResponses.scoresObtained,
-                          color: "#ff4040",
-                        },
-                      ]}
-                      label={({ dataEntry }) => {
-                        console.log(dataEntry);
-                        return `${Math.round(dataEntry.percentage)} %`;
-                      }}
-                      radius={40}
+                    <VictoryPie
+                      padAngle={({ datum }) => datum.y}
+                      colorScale={["green", "red"]}
+                      data={myData}
                     />
                   </Box>
                 </Grid>
@@ -164,29 +176,13 @@ function ResultHistory(props) {
             >
               <Typography
                 style={{
-                  fontSize: "32px",
+                  fontSize: "26px",
                   fontWeight: "bold",
                   marginBottom: "10px",
                 }}
               >
-                Results
+                TestName: {selectedResponses.testName}
               </Typography>
-
-              {/* <TextField
-                id="outlined-select-currency"
-                select
-                sx={{ width: "50%", margin: "10px" }}
-                label="Select Exam"
-                size="small"
-                value={selectedResponses.testName}
-                onChange={handleSelection}
-              >
-                {responsesList.map((option, ele) => (
-                  <MenuItem id={option.testName} key={option} value={option}>
-                    {option.testName}
-                  </MenuItem>
-                ))}
-              </TextField> */}
               <Button onClick={() => props.setCurrPage("resultHistory")}>
                 Back
               </Button>
@@ -209,13 +205,13 @@ function ResultHistory(props) {
                     }}
                   >
                     <AccordionSummary
-                      style={{ backgroundColor: "#F8F8F8" }}
+                      style={{ backgroundColor: "#EBF2F8" }}
                       expandIcon={<ExpandMoreIcon />}
                       aria-controls="panel1a-content"
                       id="panel1a-header"
                     >
                       <Grid container spacing={2}>
-                        <Grid item xs={6}>
+                        <Grid item xs={10}>
                           <Typography
                             style={{
                               padding: "5px",
@@ -226,7 +222,7 @@ function ResultHistory(props) {
                             {ind + 1 + " "}. {curQuestion.questionName}
                           </Typography>
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item xs={2}>
                           <Typography
                             style={{
                               textAlign: "right",

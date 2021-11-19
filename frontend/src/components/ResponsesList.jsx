@@ -66,85 +66,96 @@ function ResponsesList(props) {
   return (
     <Box
       style={{
-        backgroundColor: "#EBF2F8",
         padding: "20px",
-        height: "100vh",
+        height: "90vh",
+        backgroundColor: "#EBF2F8",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
-      {responsesList.length ? (
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 400 }} aria-label="simple table">
-            <TableHead sx={{ backgroundColor: "blue" }}>
-              <TableRow>
-                <TableCell
-                  align="center"
-                  sx={{ color: "white", fontWeight: "bold" }}
-                >
-                  S.No
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ color: "white", fontWeight: "bold" }}
-                >
-                  Test Name
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ color: "white", fontWeight: "bold" }}
-                >
-                  Date
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ color: "white", fontWeight: "bold" }}
-                >
-                  Finish Time
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ color: "white", fontWeight: "bold" }}
-                >
-                  Result
-                </TableCell>
-                <TableCell
-                  align="center"
-                  sx={{ color: "white", fontWeight: "bold" }}
-                >
-                  More Details
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {responsesList.map((row, ind) => (
-                <TableRow
-                  key={row.name}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell align="center" component="th" scope="row">
-                    {ind + 1}
+      <Box style={{ height: "500px", width: "950px", overflow: "auto" }}>
+        {responsesList.length ? (
+          <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  <TableCell
+                    align="center"
+                    width="10%"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    S.No
                   </TableCell>
-
-                  <TableCell align="center">{row.testName}</TableCell>
-                  <TableCell align="center">
-                    {moment(row.finishTime).format("YYYY-MM-DD")}
+                  <TableCell width="30%" sx={{ fontWeight: "bold" }}>
+                    Test Name
                   </TableCell>
-                  <TableCell align="center">
-                    {moment(row.finishTime).format("HH:mm:ss")}
+                  <TableCell
+                    align="center"
+                    width="15%"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    Date
                   </TableCell>
-                  <TableCell align="center">
-                    {row.passed ? "Passed" : "Failed"}
+                  <TableCell
+                    align="center"
+                    width="15%"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    Finish Time
                   </TableCell>
-                  <TableCell align="center">
-                    <Button onClick={() => handleView(row._id)}>View</Button>
+                  <TableCell
+                    align="center"
+                    width="15%"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    Result
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    width="15%"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    More Details
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ) : (
-        <Box>No Responses</Box>
-      )}
+              </TableHead>
+              <TableBody>
+                {responsesList.map((row, ind) => (
+                  <TableRow
+                    key={row.name}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell
+                      align="center"
+                      width="10%"
+                      component="th"
+                      scope="row"
+                    >
+                      {ind + 1}
+                    </TableCell>
+
+                    <TableCell width="30%">{row.testName}</TableCell>
+                    <TableCell align="center" width="15%">
+                      {moment(row.finishTime).format("YYYY-MM-DD")}
+                    </TableCell>
+                    <TableCell align="center" width="15%">
+                      {moment(row.finishTime).format("HH:mm:ss")}
+                    </TableCell>
+                    <TableCell align="center" width="15%">
+                      {row.passed ? "Passed" : "Failed"}
+                    </TableCell>
+                    <TableCell align="center" width="15%">
+                      <Button onClick={() => handleView(row._id)}>View</Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <Box>No Responses</Box>
+        )}
+      </Box>
     </Box>
   );
 }

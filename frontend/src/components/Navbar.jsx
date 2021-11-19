@@ -142,7 +142,9 @@ function Navbar(props) {
               style={{ marginRight: "10px" }}
               variant="outlined"
               color="secondary"
-              onClick={() => props.setCurrPage("editProfile")}
+              onClick={() => {
+                props.setCurrPage("editProfile");
+              }}
             >
               Update
             </Button>

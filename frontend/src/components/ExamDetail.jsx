@@ -95,13 +95,16 @@ function ExamDetail(props) {
         console.log(res.data);
         alert(res.data.message);
         props.setResponsesId(res.data.result);
+        props.setLayout("examWindow");
+      })
+      .then(() => {
+        handleFullScreen();
       })
       .catch((err) => {
         console.log(err);
         alert(err.message);
         // props.setLayout("home");
-      })
-      .finally(() => props.setLayout("examWindow"));
+      });
   };
   const handleFullScreen = () => {
     document.documentElement.requestFullscreen().catch((e) => console.log(e));

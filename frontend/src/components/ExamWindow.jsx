@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Box,
   Button,
@@ -52,6 +52,9 @@ function ExamWindow(props) {
   const selectedTest = props.selectedTest;
   const [selectedTestDetails, setSelectedTestDetails] = useState(null);
   const [answers, setAnswers] = useState([]);
+  const [errMsg, setErrMsg] = useState([]);
+  const [count, setCount] = useState(0);
+  const [disable, setDisable] = useState(false);
   const expiryTimestamp = new Date(selectedTest.endTime);
   const {
     seconds,
@@ -65,8 +68,16 @@ function ExamWindow(props) {
     restart,
   } = useTimer({
     expiryTimestamp,
-    onExpire: () => console.warn("hello"),
+    onExpire: () => console.log("submitted"),
   });
+
+  window.onfocus = function (ev) {
+    console.log("gained focus");
+  };
+
+  window.onblur = function (ev) {
+    setCount(count + 1);
+  };
   useEffect(() => {
     axios
       .get("/test/details/" + selectedTest._id, {
@@ -80,6 +91,7 @@ function ExamWindow(props) {
           setAnswers(
             res.data.result.questions.map((ele) => [false, false, false, false])
           );
+          setErrMsg(res.data.result.questions.map((ele) => ["", "", "", ""]));
           console.log(res.data);
         } else {
           alert(res.data.message);
@@ -91,12 +103,32 @@ function ExamWindow(props) {
       });
   }, []);
 
-  //   useEffect(() => {
-  //     console.log(document.fullscreenElement);
-  //     if (!document.fullscreenElement) {
-  //       alert("enter full screen");
-  //     }
-  //   }, [document.fullscreenElement]);
+  useEffect(() => {
+    if (count > 3) {
+      alert("Test is ended because of Tab switches");
+      props.setLayout("main");
+    }
+  }, [count]);
+
+  const onSave = (id) => {
+    localStorage.setItem("Answers", JSON.stringify(answers));
+    if (answers[id].reduce((sum, ele) => (ele ? (sum += 1) : sum), 0) > 0) {
+      setErrMsg(
+        errMsg.map((ele, ind) => {
+          if (ind === id) return "";
+          else return ele;
+        })
+      );
+    } else {
+      setErrMsg(
+        errMsg.map((ele, ind) => {
+          if (ind === id) return "Please select atleast one option";
+          else return ele;
+        })
+      );
+    }
+  };
+
   const onChangeAnswers = (e, questionNumber, checkedOption) => {
     setAnswers(
       answers.map((singleAns, ind) => {
@@ -111,13 +143,20 @@ function ExamWindow(props) {
       })
     );
   };
+
   const handleFullScreen = () => {
     document.documentElement.requestFullscreen().catch((e) => console.log(e));
   };
 
   const handleSubmit = (id) => {
     console.log(answers[id]);
-    const boolAnswerString = answers.map((ele) => ele.toString());
+    let savedAnswers = answers;
+    if (localStorage.getItem("Answers")) {
+      savedAnswers = JSON.parse(localStorage.getItem("Answers"));
+      localStorage.removeItem("Answers");
+    }
+
+    const boolAnswerString = savedAnswers.map((ele) => ele.toString());
     console.log(boolAnswerString);
     axios
       .post(
@@ -134,6 +173,8 @@ function ExamWindow(props) {
       )
       .then((res) => {
         alert(res.data.message);
+
+        props.setLayout("main");
       })
       .catch((err) => {
         console.log(err);
@@ -155,6 +196,7 @@ function ExamWindow(props) {
           >
             {selectedTestDetails.questions.map((ele, ind) => (
               <Accordion
+                disabled={!document.fullscreenElement}
                 style={{
                   margin: "10px",
                   boxShadow: "0 4px 4px 0 rgb(0 0 0 / 20%)",
@@ -199,6 +241,7 @@ function ExamWindow(props) {
                   <Box>
                     <Box>
                       <Checkbox
+                        disabled={!document.fullscreenElement}
                         checked={answers[ind][0]}
                         onChange={(e) => onChangeAnswers(e, ind, 0)}
                         name="opt_a"
@@ -211,6 +254,7 @@ function ExamWindow(props) {
 
                     <Box>
                       <Checkbox
+                        disabled={!document.fullscreenElement}
                         checked={answers[ind][1]}
                         onChange={(e) => onChangeAnswers(e, ind, 1)}
                         name="opt_b"
@@ -222,6 +266,7 @@ function ExamWindow(props) {
 
                     <Box>
                       <Checkbox
+                        disabled={!document.fullscreenElement}
                         checked={answers[ind][2]}
                         onChange={(e) => onChangeAnswers(e, ind, 2)}
                         name="opt_c"
@@ -233,6 +278,7 @@ function ExamWindow(props) {
 
                     <Box>
                       <Checkbox
+                        disabled={!document.fullscreenElement}
                         checked={answers[ind][3]}
                         onChange={(e) => onChangeAnswers(e, ind, 3)}
                         name="opt_d"
@@ -242,12 +288,18 @@ function ExamWindow(props) {
                       </Typography>
                     </Box>
                   </Box>
-                  <Box style={{ display: "flex", justifyContent: "right" }}>
+                  <Box
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <Typography style={{ color: "red" }}>
+                      {errMsg[ind]}
+                    </Typography>
                     <Button
+                      disabled={!document.fullscreenElement}
                       variant="contained"
-                      onClick={() => handleSubmit(ind)}
+                      onClick={() => onSave(ind)}
                     >
-                      Submit
+                      Save
                     </Button>
                   </Box>
                 </AccordionDetails>
@@ -273,12 +325,6 @@ function ExamWindow(props) {
                   <Typography style={{ fontSize: "24px", fontWeight: "bold" }}>
                     {selectedTest.testName}
                   </Typography>
-                  <Button
-                    variant="contained"
-                    onClick={() => props.setLayout("main")}
-                  >
-                    Endtest
-                  </Button>
                 </Box>
                 <Box
                   style={{
@@ -311,6 +357,33 @@ function ExamWindow(props) {
                     <span>{minutes}</span>:<span>{seconds}</span>
                   </Typography>
                 </Box>
+                {!document.fullscreenElement && (
+                  <Typography style={{ color: "red", marginTop: "20px" }}>
+                    Please enable full screen
+                  </Typography>
+                )}
+                <Grid container spacing={2} style={{ marginTop: "20px" }}>
+                  <Grid item xs={6}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      fullWidth
+                      onClick={handleFullScreen}
+                      // onClick={() => deleteQuestion(ind)}
+                    >
+                      Full Screen
+                    </Button>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Button
+                      variant="contained"
+                      fullWidth
+                      onClick={handleSubmit}
+                    >
+                      End Test
+                    </Button>
+                  </Grid>
+                </Grid>
               </Box>
               <Typography
                 style={{
