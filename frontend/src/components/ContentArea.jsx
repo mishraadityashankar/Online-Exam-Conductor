@@ -3,11 +3,16 @@ import React, { useEffect, useState } from "react";
 import CreateExam from "./CreateExam";
 import CreateQuestion from "./CreateQuestion";
 import EditProfile from "./EditProfile";
+import ExamDetail from "./ExamDetail";
+import ExamList from "./ExamList";
 import Navbar from "./Navbar";
-
+import ResponsesList from "./ResponsesList";
+import ResultHistory from "./ResultHistory";
+import toast from "react-simple-toasts";
 function ContentArea(props) {
   const [userDetails, setUserDetails] = useState(null);
   const [currPage, setCurrPage] = useState("createExam");
+  const [curResponses, setCurResponses] = useState(null);
   const token = localStorage.getItem("OEC_token");
   useEffect(() => {
     axios
@@ -19,12 +24,14 @@ function ContentArea(props) {
       .then((res) => {
         if (res.data.message === "Success") {
           setUserDetails(res.data.result);
-          console.log(userDetails);
+          props.setUsername(res.data.result.name);
         } else {
-          alert(res.data.message);
+          toast(res.data.message);
         }
       })
+      .then(() => console.log(props.username))
       .catch((err) => {
+        toast(err.message);
         console.log(err);
         props.setLayout("home");
       });
@@ -51,8 +58,61 @@ function ContentArea(props) {
         <EditProfile
           setLayout={props.setLayout}
           userDetails={userDetails}
+          setUserDetails={setUserDetails}
           token={token}
+          currPage={currPage}
+          setCurrPage={setCurrPage}
         ></EditProfile>
+      );
+    } else if (currPage === "examList") {
+      return (
+        <ExamList
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
+          setCurrPage={setCurrPage}
+        ></ExamList>
+      );
+    } else if (currPage === "examDetails") {
+      return (
+        <ExamDetail
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          responsesId={props.responsesId}
+          setResponsesId={props.setResponsesId}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
+          setCurrPage={setCurrPage}
+        ></ExamDetail>
+      );
+    } else if (currPage === "resultHistory") {
+      return (
+        <ResponsesList
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
+          setCurrPage={setCurrPage}
+          curResponses={curResponses}
+          setCurResponses={setCurResponses}
+        ></ResponsesList>
+      );
+    } else if (currPage === "singleResponses") {
+      return (
+        <ResultHistory
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
+          setCurrPage={setCurrPage}
+          curResponses={curResponses}
+          setCurResponses={setCurResponses}
+        ></ResultHistory>
       );
     } else return <></>;
   };

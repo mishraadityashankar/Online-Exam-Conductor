@@ -6,24 +6,37 @@ const responsesSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Test",
   },
+  testName: {
+    type: String,
+    default: "N/A",
+  },
   studentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
   scoresObtained: {
     type: Number,
-    required: true,
+    default: 0,
   },
   totalMarks: {
     type: Number,
     required: true,
   },
+  passingMarks: {
+    type: Number,
+    default: 0,
+  },
+  questions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Question",
+    },
+  ],
   recordedAnswers: {
     type: [String],
     required: true,
   },
-  passed: { type: Boolean, required: false },
-  startTime: { type: Date, default: Date.now },
-  endTime: { type: Date, default: Date.now },
+  passed: { type: Boolean, default: false },
+  finishTime: { type: Date, default: Date.now },
 });
 module.exports = mongoose.model("Responses", responsesSchema);

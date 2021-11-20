@@ -4,7 +4,7 @@ const Tests = require("../models/test_schema");
 const checkAuth = require("../utils/checkAuth");
 
 // get all
-router.get("/get", (req, res) => {
+router.get("/get", checkAuth, (req, res) => {
   Tests.find({}, (err, totalTests) => {
     if (err) {
       console.log("error");
@@ -27,7 +27,7 @@ router.post("/add", checkAuth, (req, res) => {
 });
 
 // get details
-router.get("/details/:id", (req, res) => {
+router.get("/details/:id", checkAuth, (req, res) => {
   Tests.findById(req.params.id)
     .populate("studentEnrolled")
     .populate("questions")

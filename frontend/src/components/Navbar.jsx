@@ -21,7 +21,7 @@ function Navbar(props) {
 
   const handleBox1 = () => {
     if (userDetails.role === "Student") {
-      console.log("Student");
+      props.setCurrPage("examList");
     } else {
       props.setCurrPage("createQuestion");
     }
@@ -29,7 +29,7 @@ function Navbar(props) {
 
   const handleBox2 = () => {
     if (userDetails.role === "Student") {
-      console.log("Student");
+      props.setCurrPage("resultHistory");
     } else {
       props.setCurrPage("createExam");
     }
@@ -142,7 +142,9 @@ function Navbar(props) {
               style={{ marginRight: "10px" }}
               variant="outlined"
               color="secondary"
-              onClick={() => props.setCurrPage("editProfile")}
+              onClick={() => {
+                props.setCurrPage("editProfile");
+              }}
             >
               Update
             </Button>

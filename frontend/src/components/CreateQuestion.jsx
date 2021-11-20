@@ -18,6 +18,7 @@ import {
 import AddIcon from "@mui/icons-material/AddCircle";
 import axios from "axios";
 import { makeStyles } from "@mui/styles";
+import toast from "react-simple-toasts";
 
 const useStyles = makeStyles({
   root: {
@@ -94,7 +95,8 @@ function CreateQuestion(props) {
       })
       .then((res) => {
         console.log(res.data);
-        alert(res.data.message);
+        toast(res.data.message);
+        setQuestion(initialQuestion);
       })
       .catch((err) => {
         console.log(err);

@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const Users = require("../models/user_schema");
-const checkauth = require("../utils/checkAuth.js");
+
 // const jwt= require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const checkAuth = require("../utils/checkAuth.js");
 
 // router.get("/signup",(req,res)=>
 // {
@@ -105,7 +106,7 @@ router.post("/add", (req, res) => {
 });
 
 // get details
-router.get("/details/", checkauth, (req, res) => {
+router.get("/details/", checkAuth, (req, res) => {
   console.log(req.userData);
   Users.find({ email: req.userData.email }, (err, foundUser) => {
     if (err) {
@@ -116,12 +117,12 @@ router.get("/details/", checkauth, (req, res) => {
   });
 });
 
-router.post("/update/:id", (req, res) => {
-  Users.findByIdAndUpdate(req.params.id, req.body, (err) => {
+router.post("/update/", checkAuth, (req, res) => {
+  Users.findByIdAndUpdate(req.userData.id, req.body, (err, updatedUser) => {
     if (err) {
       console.log(err);
     } else {
-      res.status(200).json({ message: "updated" });
+      res.status(200).json({ message: "updated", result: updatedUser });
     }
   });
 });

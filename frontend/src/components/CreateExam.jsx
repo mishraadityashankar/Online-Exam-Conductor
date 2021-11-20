@@ -68,14 +68,17 @@ function CreateExam(props) {
     startTime: "",
     endTime: "",
     subject: "",
+    passingMarks: 0,
     totalMarks: 0,
     studentEnrolled: [],
     expired: false,
   };
   const [exam, setExam] = useState(initialExam);
   const [questionList, setQuestionList] = useState([]);
+  const [totalQuestionList, setTotalQuestionList] = useState([]);
   const [pickedQuestion, setPickedQuestion] = useState(null);
   const [selectedQuestions, setSelectedQuestions] = useState([]);
+  const [totalMarks, setTotalMarks] = useState(0);
   const [duration, setDuration] = useState(0);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -89,6 +92,7 @@ function CreateExam(props) {
       .then((res) => {
         if (res.data.message === "Success") {
           setQuestionList(res.data.result);
+          setTotalQuestionList(res.data.result);
           console.log(res.data);
         } else {
           alert(res.data.message);
@@ -100,15 +104,28 @@ function CreateExam(props) {
       });
   }, []);
 
+  useEffect(() => {
+    const filteredQuestion = totalQuestionList.filter(
+      (ele) => ele.subject === exam.subject
+    );
+    setQuestionList(filteredQuestion);
+  }, [exam.subject]);
   const addQuestion = () => {
     if (pickedQuestion)
       setSelectedQuestions([...selectedQuestions, pickedQuestion]);
+    setTotalMarks(totalMarks + pickedQuestion.marks);
   };
 
   const deleteQuestion = (id) => {
+    let newtotal = 0;
+    selectedQuestions.map((ele, ind) => {
+      if (ind !== id) newtotal += ele.marks;
+      return;
+    });
     let updatedQuestions = selectedQuestions.filter(
       (item, index) => index !== id
     );
+    setTotalMarks(newtotal);
     setSelectedQuestions(updatedQuestions);
   };
 
@@ -138,14 +155,26 @@ function CreateExam(props) {
   };
 
   const handleSubmit = () => {
+    console.log(date);
     const startTime = new Date(date);
+    console.log(startTime);
+    const startDatetimeUTC = moment.utc(startTime).format();
+    console.log(startDatetimeUTC);
     const endTime = moment(startTime).add(duration, "m").toDate();
+    console.log(endTime);
+    const endDatetimeUTC = moment.utc(endTime).format();
+    console.log(endDatetimeUTC);
     const questions = selectedQuestions.map((ele) => ele._id);
+    if (exam.passingMarks > totalMarks) {
+      alert("Passing marks cannot be greater than total");
+      return;
+    }
     const reqBody = {
       ...exam,
-      startTime: startTime,
-      endTime: endTime,
+      startTime: startDatetimeUTC,
+      endTime: endDatetimeUTC,
       questions: questions,
+      totalMarks: totalMarks,
     };
     axios
       .post("/test/add", reqBody, {
@@ -194,6 +223,7 @@ function CreateExam(props) {
         </Box>
 
         <Box style={{ height: "70%" }}>
+          <Typography>Total Marks: {totalMarks}</Typography>
           <Box className={classes.formElement}>
             <TextField
               label="Assesment Name"
@@ -219,10 +249,10 @@ function CreateExam(props) {
             <TextField
               style={{ marginRight: "5px" }}
               type="number"
-              label="Total Marks"
+              label="Passing Marks"
               size="small"
-              name="totalMarks"
-              value={exam.totalMarks}
+              name="passingMarks"
+              value={exam.passingMarks}
               onChange={handleChange}
             />
             <TextField
@@ -368,12 +398,7 @@ function CreateExam(props) {
                   <Typography className={classes.paragraph}>
                     <span>Option A:</span> {curQuestion.option_A}
                   </Typography>
-                  {/* <Box>
-      <FormControlLabel
-        label="Option A"
-        control={<Checkbox name="jason" />}
-      />
-    </Box> */}
+
                   <Typography className={classes.paragraph}>
                     <span>Option B:</span> {curQuestion.option_B}
                   </Typography>
