@@ -75,6 +75,7 @@ function CreateExam(props) {
   };
   const [exam, setExam] = useState(initialExam);
   const [questionList, setQuestionList] = useState([]);
+  const [totalQuestionList, setTotalQuestionList] = useState([]);
   const [pickedQuestion, setPickedQuestion] = useState(null);
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [totalMarks, setTotalMarks] = useState(0);
@@ -91,6 +92,7 @@ function CreateExam(props) {
       .then((res) => {
         if (res.data.message === "Success") {
           setQuestionList(res.data.result);
+          setTotalQuestionList(res.data.result);
           console.log(res.data);
         } else {
           alert(res.data.message);
@@ -102,6 +104,12 @@ function CreateExam(props) {
       });
   }, []);
 
+  useEffect(() => {
+    const filteredQuestion = totalQuestionList.filter(
+      (ele) => ele.subject === exam.subject
+    );
+    setQuestionList(filteredQuestion);
+  }, [exam.subject]);
   const addQuestion = () => {
     if (pickedQuestion)
       setSelectedQuestions([...selectedQuestions, pickedQuestion]);

@@ -10,6 +10,7 @@ import { useTimer } from "react-timer-hook";
 
 import { makeStyles } from "@mui/styles";
 import axios from "axios";
+import toast from "react-simple-toasts";
 
 const useStyles = makeStyles({
   root: {
@@ -80,7 +81,7 @@ function ExamDetail(props) {
   //   useEffect(() => {
   //     console.log(document.fullscreenElement);
   //     if (!document.fullscreenElement) {
-  //       alert("enter full screen");
+  //       toast("enter full screen");
   //     }
   //   }, [document.fullscreenElement]);
 
@@ -93,7 +94,7 @@ function ExamDetail(props) {
       })
       .then((res) => {
         console.log(res.data);
-        alert(res.data.message);
+        toast(res.data.message);
         props.setResponsesId(res.data.result);
         props.setLayout("examWindow");
       })
@@ -102,7 +103,7 @@ function ExamDetail(props) {
       })
       .catch((err) => {
         console.log(err);
-        alert(err.message);
+        toast(err.message);
         // props.setLayout("home");
       });
   };

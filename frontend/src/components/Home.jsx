@@ -3,11 +3,11 @@ import {
   Drawer,
   Typography,
   Box,
-  Avatar,
+  Grid,
   Button,
   TextField,
 } from "@mui/material";
-
+import toast from "react-simple-toasts";
 import axios from "axios";
 function validateEmail(email) {
   const re =
@@ -27,19 +27,21 @@ function Home(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validateEmail(user.email) || user.password === "") {
-      alert("Enter the valid data");
-    } else {
+    if (!validateEmail(user.email)) toast("Enter the valid email");
+    else if (user.password === "") toast("Password cannot be empty");
+    else {
       axios
         .post("/user/login", user)
         .then((res) => {
-          alert(res.data.message);
+          toast(res.data.message);
+
           if (res.data.message === "success") {
             localStorage.setItem("OEC_token", res.data.token);
             props.setLayout("main");
           }
         })
         .catch((err) => {
+          toast(err.message);
           console.log(err);
         });
     }
@@ -56,8 +58,9 @@ function Home(props) {
     >
       <Box
         style={{
-          height: "50vh",
-          width: "30%",
+          height: "80%",
+          overflow: "auto",
+          width: "40%",
           backgroundColor: "white",
           boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
           display: "flex",
@@ -74,57 +77,56 @@ function Home(props) {
         <Box style={{ fontSize: "14px", marginBottom: "10px" }}>
           Welcome, please enter your login credentials!
         </Box>
-        <Box
-          style={{
-            height: "65%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-evenly",
-          }}
-        >
-          <TextField
-            label="Email"
-            name="email"
-            value={user.email}
-            onChange={handleChange}
-            fullWidth
-            size="small"
-          />
-          <TextField
-            label="Password"
-            name="password"
-            value={user.password}
-            onChange={handleChange}
-            fullWidth
-            size="small"
-          />
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              label="Email"
+              name="email"
+              value={user.email}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Password"
+              name="password"
+              value={user.password}
+              onChange={handleChange}
+              fullWidth
+              size="small"
+            />
+          </Grid>
+        </Grid>
+        <Box>
           <Button
             variant="contained"
             onClick={handleSubmit}
             fullWidth
+            style={{ padding: "5px", marginTop: "10px", marginBottom: "10px" }}
             color="success"
           >
             Login
           </Button>
-        </Box>
 
-        <Box
-          style={{
-            padding: "10px",
-          }}
-          onClick={goToRegister}
-          variant="p"
-        >
-          Need an account?{" "}
-          <span
+          <Box
             style={{
-              cursor: "pointer",
-              textDecoration: "underline",
-              color: "blue",
+              padding: "10px",
             }}
+            onClick={goToRegister}
           >
-            Sign up here
-          </span>
+            Need an account?{" "}
+            <span
+              style={{
+                cursor: "pointer",
+                textDecoration: "underline",
+                color: "blue",
+              }}
+            >
+              Register here
+            </span>
+          </Box>
         </Box>
       </Box>
     </Box>

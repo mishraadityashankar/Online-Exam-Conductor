@@ -16,6 +16,8 @@ import { useTimer } from "react-timer-hook";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axios from "axios";
 import { makeStyles } from "@mui/styles";
+import ChatWindow from "./ChatWindow";
+import toast from "react-simple-toasts";
 
 const useStyles = makeStyles({
   root: {
@@ -94,7 +96,7 @@ function ExamWindow(props) {
           setErrMsg(res.data.result.questions.map((ele) => ["", "", "", ""]));
           console.log(res.data);
         } else {
-          alert(res.data.message);
+          toast(res.data.message);
         }
       })
       .catch((err) => {
@@ -104,8 +106,8 @@ function ExamWindow(props) {
   }, []);
 
   useEffect(() => {
-    if (count > 3) {
-      alert("Test is ended because of Tab switches");
+    if (count > 300000) {
+      toast("Test is ended because of Tab switches");
       props.setLayout("main");
     }
   }, [count]);
@@ -172,13 +174,13 @@ function ExamWindow(props) {
         }
       )
       .then((res) => {
-        alert(res.data.message);
+        toast(res.data.message);
 
         props.setLayout("main");
       })
       .catch((err) => {
         console.log(err);
-        alert(err.message);
+        toast(err.message);
       });
   };
   return (
@@ -385,69 +387,7 @@ function ExamWindow(props) {
                   </Grid>
                 </Grid>
               </Box>
-              <Typography
-                style={{
-                  fontSize: "26px",
-                  fontWeight: "bold",
-                  marginBottom: "20px",
-                }}
-              >
-                Ask Doubt
-              </Typography>
-              <TextField
-                label="Ask Question"
-                name="testName"
-                style={{ marginBottom: "20px" }}
-                //   value={exam.testName}
-                //   onChange={handleChange}
-                fullWidth
-                size="small"
-              />
-              <Box
-                style={{
-                  backgroundColor: "white",
-                  padding: "20px",
-                  height: "270px",
-                  overflow: "auto",
-                }}
-              >
-                {[
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                  "",
-                ].map((ele) => (
-                  <Box>
-                    <Typography
-                      style={{
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Aditya
-                    </Typography>
-                    <Typography
-                      style={{
-                        fontSize: "16px",
-                      }}
-                    >
-                      Hello Sir how are you
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
+              <ChatWindow userDetails={props.username}></ChatWindow>
             </Box>
           </Grid>
         </Grid>

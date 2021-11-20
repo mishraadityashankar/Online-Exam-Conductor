@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ChatWindow from "./ChatWindow";
 import ContentArea from "./ContentArea";
 import ExamWindow from "./ExamWindow";
 import Home from "./Home";
@@ -12,6 +13,8 @@ function MainLayout(props) {
   const [selectedTest, setSelectedTest] = useState(null);
   const [responsesId, setResponsesId] = useState(null);
 
+  const [username, setUsername] = useState(null);
+
   const renderLayout = () => {
     if (layout === "home") {
       return <Home setLayout={setLayout} layout={layout}></Home>;
@@ -24,6 +27,8 @@ function MainLayout(props) {
           setSelectedTest={setSelectedTest}
           setLayout={setLayout}
           layout={layout}
+          username={username}
+          setUsername={setUsername}
           responsesId={responsesId}
           setResponsesId={setResponsesId}
         ></ContentArea>
@@ -31,6 +36,8 @@ function MainLayout(props) {
     } else if (layout === "examWindow") {
       return (
         <ExamWindow
+          username={username}
+          setUsername={setUsername}
           selectedTest={selectedTest}
           setSelectedTest={setSelectedTest}
           setLayout={setLayout}
@@ -41,6 +48,11 @@ function MainLayout(props) {
       );
     }
   };
+  // return (
+  //   <div>
+  //     <ChatWindow></ChatWindow>
+  //   </div>
+  // );
   return <div>{renderLayout()}</div>;
 }
 

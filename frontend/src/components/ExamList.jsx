@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
 import { getAutoHeightDuration } from "@mui/material/styles/createTransitions";
+import toast from "react-simple-toasts";
 
 function ExamList(props) {
   const [testList, setTestList] = useState([]);
@@ -21,7 +22,7 @@ function ExamList(props) {
           );
           console.log(res.data);
         } else {
-          alert(res.data.message);
+          toast(res.data.message);
         }
       })
       .catch((err) => {

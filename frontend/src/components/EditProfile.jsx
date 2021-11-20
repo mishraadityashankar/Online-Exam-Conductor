@@ -12,6 +12,7 @@ import {
 
 import { makeStyles } from "@mui/styles";
 import axios from "axios";
+import toast from "react-simple-toasts";
 
 const useStyles = makeStyles({
   root: {
@@ -61,7 +62,7 @@ function EditProfile(props) {
       })
       .then((res) => {
         console.log(res.data);
-        alert(res.data.message);
+        toast(res.data.message);
         props.setUserDetails(user);
         props.setCurrPage("createExam");
       })

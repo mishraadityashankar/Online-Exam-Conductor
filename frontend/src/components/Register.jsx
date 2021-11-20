@@ -5,11 +5,16 @@ import {
   Card,
   CardContent,
   FormLabel,
+  Grid,
   TextField,
   MenuItem,
+  Typography,
+  IconButton,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import ClearIcon from "@mui/icons-material/Clear";
 import axios from "axios";
+import toast from "react-simple-toasts";
 
 const useStyles = makeStyles({
   root: {
@@ -21,9 +26,10 @@ const useStyles = makeStyles({
     height: "100vh",
   },
   card: {
-    width: "35%",
+    width: "60%",
     padding: "10px",
-    height: "93%",
+    height: "85%",
+    overflow: "auto",
     alignContent: "left",
     boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
   },
@@ -33,7 +39,8 @@ const useStyles = makeStyles({
     padding: "10px",
   },
   btn: {
-    margin: "10px",
+    width: "50%",
+    marginTop: "20px",
   },
 });
 const intialState = {
@@ -59,32 +66,37 @@ function validateMobile(phone) {
   return re.test(phone);
 }
 
+function validateExpertise(subjects) {
+  const re = /^[a-zA-Z0-9\x20]*$/;
+  return re.test(subjects);
+}
 function Register(props) {
   const classes = useStyles();
   const [user, setUser] = useState(intialState);
+  const [errMsg, setErrMsg] = useState("");
+
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const goToRegister = () => {
+  const goToHome = () => {
     props.setLayout("home");
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (
-      !validateEmail(user.email) ||
-      !validateMobile(user.contact) ||
-      user.password === "" ||
-      user.name === "" ||
-      user.address === ""
-    )
-      alert("Enter the valid data");
+    if (!validateEmail(user.email)) setErrMsg("Email is not valid");
+    else if (!validateMobile(user.contact))
+      setErrMsg("Contact number should have 10 digits");
+    else if (!validateExpertise(user.expertise))
+      setErrMsg("Expertise Subjects should be separated by single space");
+    else if (user.password === "" || user.name === "" || user.address === "")
+      setErrMsg("Required field cannot be empty");
     else {
       axios
         .post("/user/register", user)
         .then((res) => {
           console.log(res.data);
-          alert(res.data.message);
+          toast(res.data.message);
           setUser(intialState);
         })
         .catch((err) => console.log(err));
@@ -103,25 +115,32 @@ function Register(props) {
           >
             Register
           </Box>
+
           <Box className={classes.formElement}>
-            <TextField
-              sx={{ width: "48%" }}
-              required
-              name="email"
-              label="Email"
-              value={user.email}
-              onChange={handleChange}
-              size="small"
-            />
-            <TextField
-              sx={{ width: "48%" }}
-              name="password"
-              required
-              label="Password"
-              onChange={handleChange}
-              value={user.password}
-              size="small"
-            />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  required
+                  fullWidth
+                  name="email"
+                  label="Email"
+                  value={user.email}
+                  onChange={handleChange}
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  fullWidth
+                  name="password"
+                  required
+                  label="Password"
+                  onChange={handleChange}
+                  value={user.password}
+                  size="small"
+                />
+              </Grid>
+            </Grid>
           </Box>
           <Box className={classes.formElement}>
             <TextField
@@ -146,31 +165,39 @@ function Register(props) {
             />
           </Box>
           <Box className={classes.formElement}>
-            <TextField
-              sx={{ width: "48%" }}
-              name="contact"
-              required
-              value={user.contact}
-              onChange={handleChange}
-              label="Contact"
-              size="small"
-            />
-            <TextField
-              sx={{ width: "48%", textAlign: "left" }}
-              label="Role"
-              required
-              select
-              size="small"
-              name="role"
-              value={user.role}
-              onChange={handleChange}
-            >
-              {["Faculty", "Student"].map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  fullWidth
+                  name="contact"
+                  required
+                  value={user.contact}
+                  onChange={handleChange}
+                  label="Contact"
+                  size="small"
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  sx={{ textAlign: "left" }}
+                  fullWidth
+                  label="Role"
+                  required
+                  select
+                  size="small"
+                  name="role"
+                  value={user.role}
+                  onChange={handleChange}
+                >
+                  {["Faculty", "Student"].map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            </Grid>
           </Box>
           <Box className={classes.formElement}>
             <TextField
@@ -184,59 +211,71 @@ function Register(props) {
           </Box>
           {user.role === "Student" ? (
             <Box className={classes.formElement}>
-              <TextField
-                sx={{ width: "48%" }}
-                label="Class"
-                type="Name"
-                size="small"
-                name="class"
-                onChange={handleChange}
-                value={user.class}
-              />
-              <TextField
-                sx={{ width: "48%" }}
-                label="Roll No"
-                type="Name"
-                size="small"
-                name="rollNo"
-                onChange={handleChange}
-                value={user.rollNo}
-              />
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                  <TextField
+                    fullWidth
+                    label="Class"
+                    type="Name"
+                    size="small"
+                    name="class"
+                    onChange={handleChange}
+                    value={user.class}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                  <TextField
+                    fullWidth
+                    label="Roll No"
+                    type="Name"
+                    size="small"
+                    name="rollNo"
+                    onChange={handleChange}
+                    value={user.rollNo}
+                  />
+                </Grid>
+              </Grid>
             </Box>
           ) : (
             <Box className={classes.formElement}>
               <TextField
-                label="Expertise"
-                name="expertise"
+                label="Assigned Subjects"
                 fullWidth
+                name="expertise"
                 size="small"
-                onChange={handleChange}
                 value={user.expertise}
+                onChange={handleChange}
               />
             </Box>
           )}
-
-          <Button
-            className={classes.btn}
-            variant="contained"
-            fullWidth
-            color="success"
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
-
-          <Box
-            style={{
-              padding: "10px",
-              cursor: "pointer",
-              textDecoration: "underline",
-              color: "blue",
-            }}
-            onClick={goToRegister}
-          >
-            Go to login
-          </Box>
+          <Typography style={{ color: "red" }}>{errMsg}</Typography>
+          <Grid container spacing={2} style={{ marginTop: "20px" }}>
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+              <Button
+                variant="contained"
+                fullWidth
+                color="success"
+                onClick={handleSubmit}
+                style={{
+                  padding: "10px",
+                }}
+              >
+                Submit
+              </Button>
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+              <Button
+                variant="outlined"
+                fullWidth
+                style={{
+                  padding: "10px",
+                }}
+                onClick={goToHome}
+              >
+                Go to login
+              </Button>
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
     </Box>

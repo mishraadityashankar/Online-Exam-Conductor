@@ -13,6 +13,7 @@ import {
 
 import axios from "axios";
 import moment from "moment";
+import toast from "react-simple-toasts";
 
 function ResponsesList(props) {
   const [responsesList, setResponsesList] = useState([]);
@@ -29,7 +30,7 @@ function ResponsesList(props) {
           setResponsesList(res.data.result);
           console.log(res.data.result);
         } else {
-          alert(res.data.message);
+          toast(res.data.message);
         }
       })
       .catch((err) => {
@@ -54,7 +55,7 @@ function ResponsesList(props) {
           console.log(res.data);
           props.setCurResponses(res.data.result);
         } else {
-          alert(res.data.message);
+          toast(res.data.message);
         }
       })
       .catch((err) => {

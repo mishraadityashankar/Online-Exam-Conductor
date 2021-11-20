@@ -8,7 +8,7 @@ import ExamList from "./ExamList";
 import Navbar from "./Navbar";
 import ResponsesList from "./ResponsesList";
 import ResultHistory from "./ResultHistory";
-
+import toast from "react-simple-toasts";
 function ContentArea(props) {
   const [userDetails, setUserDetails] = useState(null);
   const [currPage, setCurrPage] = useState("createExam");
@@ -24,12 +24,14 @@ function ContentArea(props) {
       .then((res) => {
         if (res.data.message === "Success") {
           setUserDetails(res.data.result);
-          console.log(userDetails);
+          props.setUsername(res.data.result.name);
         } else {
-          alert(res.data.message);
+          toast(res.data.message);
         }
       })
+      .then(() => console.log(props.username))
       .catch((err) => {
+        toast(err.message);
         console.log(err);
         props.setLayout("home");
       });

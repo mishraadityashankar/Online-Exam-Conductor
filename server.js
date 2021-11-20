@@ -2,12 +2,17 @@ const express = require("express");
 const mongoose = require("mongoose");
 // const path = require("path");
 const app = express();
-
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
 const user_route = require("./routes/user_routes");
 const test_route = require("./routes/test_route");
 const question_route = require("./routes/question_route");
 const responses_route = require("./routes/responses_route");
 const dotenv = require("dotenv");
+
+// var cors = require("cors");
+
+// app.use(cors());
 
 ////middle ware set up
 dotenv.config();
@@ -37,6 +42,19 @@ app.use("/responses", responses_route);
 //     });
 // }
 
+///socket
+
+io.on("connection", (socket) => {
+  socket.on("join-room", (testId, userName) => {
+    console.log("joined room", testId, userName);
+    socket.join(testId);
+    socket.on("message", (userName, message) => {
+      console.log(userName, message);
+      io.in(testId).emit("createMessage", userName, message);
+    });
+  });
+});
+
 ///// DB and server setup
 mongoose.Promise = global.Promise;
 
@@ -50,6 +68,6 @@ mongoose.connect(
   }
 );
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log("Server is listening on port: " + process.env.PORT);
 });
