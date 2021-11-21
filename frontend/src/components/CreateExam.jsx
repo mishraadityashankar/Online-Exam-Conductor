@@ -1,66 +1,25 @@
 import React, { useState, useEffect } from "react";
 import {
-  Drawer,
-  Typography,
   Box,
-  Avatar,
   Button,
   TextField,
-  Card,
   FormLabel,
-  TextareaAutosize,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  CardContent,
   Grid,
-  Divider,
-  FormControlLabel,
-  Checkbox,
   MenuItem,
-  Icon,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  DialogContentText,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { makeStyles } from "@mui/styles";
-import Delete from "@mui/icons-material/Delete";
 import axios from "axios";
 import moment from "moment";
-const useStyles = makeStyles({
-  root: {
-    backgroundColor: "#F5F5F5",
-    display: "flex",
-    justifyContent: "space-between",
-    height: "90vh",
-    padding: "20px",
-  },
-  card: {
-    width: "45%",
-    padding: "10px",
-    alignContent: "left",
-    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-  },
-  formElement: {
-    display: "flex",
-    justifyContent: "space-evenly",
-    padding: "10px",
-  },
-  btn: {
-    marginleft: "10px",
-    marginTop: "10px",
-    marginRight: "10px",
-  },
-  paragraph: {
-    padding: "5px",
-    "& span": {
-      color: "black",
-      fontSize: "18px",
-      fontWeight: "bold",
-    },
-  },
-});
+import QuestionList from "./QuestionList";
+import toast from "react-simple-toasts";
+import { commonStyles, createExamStyles } from "../styles/CommonStyle";
+import CreateQuestion from "./CreateQuestion";
 
 function CreateExam(props) {
-  const classes = useStyles();
   const initialExam = {
     testName: "",
     questions: [],
@@ -72,7 +31,26 @@ function CreateExam(props) {
     totalMarks: 0,
     studentEnrolled: [],
     expired: false,
+    activityThreshold: 3,
   };
+  const initialQuestion = {
+    questionName: "",
+    problemStatement: "",
+    subject: "",
+    marks: 1,
+    difficulty: "Easy",
+    answer: [false, false, false, false],
+    explanation: "Not available",
+    option_A: "",
+    option_B: "",
+    option_C: "",
+    option_D: "",
+    createdBy: props.userDetails._id,
+  };
+
+  const classes = commonStyles();
+  const classes1 = createExamStyles();
+  const [open, setOpen] = useState(false);
   const [exam, setExam] = useState(initialExam);
   const [questionList, setQuestionList] = useState([]);
   const [totalQuestionList, setTotalQuestionList] = useState([]);
@@ -81,12 +59,27 @@ function CreateExam(props) {
   const [totalMarks, setTotalMarks] = useState(0);
   const [duration, setDuration] = useState(0);
   const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const difficulty = ["Easy", "Medium", "Hard"];
+  const [question, setQuestion] = useState(initialQuestion);
+  const [err, setErr] = useState("");
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setErr("");
+    setQuestion(initialQuestion);
+  };
   useEffect(() => {
     axios
       .get("/question/get", {
         headers: {
           Authorization: "Bearer " + props.token,
+        },
+        params: {
+          subject: exam.subject,
         },
       })
       .then((res) => {
@@ -95,14 +88,15 @@ function CreateExam(props) {
           setTotalQuestionList(res.data.result);
           console.log(res.data);
         } else {
-          alert(res.data.message);
+          toast(res.data.message);
         }
       })
       .catch((err) => {
         console.log(err);
+        toast(err.message);
         props.setLayout("home");
       });
-  }, []);
+  }, [exam.subject]);
 
   useEffect(() => {
     const filteredQuestion = totalQuestionList.filter(
@@ -110,6 +104,7 @@ function CreateExam(props) {
     );
     setQuestionList(filteredQuestion);
   }, [exam.subject]);
+
   const addQuestion = () => {
     if (pickedQuestion)
       setSelectedQuestions([...selectedQuestions, pickedQuestion]);
@@ -125,6 +120,7 @@ function CreateExam(props) {
     let updatedQuestions = selectedQuestions.filter(
       (item, index) => index !== id
     );
+    if (updatedQuestions.length === 0) setPickedQuestion(null);
     setTotalMarks(newtotal);
     setSelectedQuestions(updatedQuestions);
   };
@@ -142,33 +138,36 @@ function CreateExam(props) {
   const handleDate = (e) => {
     setDate(e.target.value);
   };
-  const handleTime = (e) => {
-    setTime(e.target.value);
-    console.log(time);
-  };
-  const formatAnswer = (answerArray) => {
-    let ans = " ";
-    answerArray.map((ele, ind) => {
-      if (ele) ans += String.fromCharCode(65 + ind) + " ";
-    });
-    return ans;
-  };
 
   const handleSubmit = () => {
-    console.log(date);
     const startTime = new Date(date);
-    console.log(startTime);
     const startDatetimeUTC = moment.utc(startTime).format();
-    console.log(startDatetimeUTC);
     const endTime = moment(startTime).add(duration, "m").toDate();
-    console.log(endTime);
     const endDatetimeUTC = moment.utc(endTime).format();
-    console.log(endDatetimeUTC);
     const questions = selectedQuestions.map((ele) => ele._id);
-    if (exam.passingMarks > totalMarks) {
-      alert("Passing marks cannot be greater than total");
+
+    if (exam.testName === "") {
+      toast("Test Name cannot be empty");
+      return;
+    } else if (startTime == "Invalid Date" || endTime == "Invalid Date") {
+      toast("Select date properly");
+      return;
+    } else if (exam.activityThreshold < 0) {
+      toast("User activity threshold has be to positive");
+      return;
+    } else if (duration < 0) {
+      toast("Duration has be to positive");
+      return;
+    } else if (exam.passingMarks > totalMarks || exam.passingMarks < 0) {
+      toast(
+        "Passing marks should be positive and less than or equals to total"
+      );
+      return;
+    } else if (exam.subject === "") {
+      toast("Select subject properly");
       return;
     }
+
     const reqBody = {
       ...exam,
       startTime: startDatetimeUTC,
@@ -184,320 +183,283 @@ function CreateExam(props) {
       })
       .then((res) => {
         console.log(res.data);
-        alert(res.data.message);
         setExam(initialExam);
         setDate("");
         setDuration(0);
         setPickedQuestion(null);
         setSelectedQuestions([]);
+        toast(res.data.message);
       })
       .catch((err) => {
         console.log(err);
-        props.setLayout("home");
+        toast(err.message);
+      });
+  };
+
+  const handleQuestionChange = (e) => {
+    setQuestion({ ...question, [e.target.name]: e.target.value });
+  };
+
+  const handleOptionChecked = (e, id) => {
+    console.log(id);
+    const newAnswer = question.answer.map((ele, key) => {
+      if (key === id) {
+        return e.target.checked;
+      }
+      return ele;
+    });
+
+    setQuestion({ ...question, answer: newAnswer });
+  };
+
+  const handleCreateQuestion = (e) => {
+    if (question.questionName === "") {
+      setErr("Question Name cannot be empty");
+      return;
+    } else if (question.problemStatement === "") {
+      setErr("Problem Statement cannot be empty");
+      return;
+    } else if (question.marks < 0) {
+      setErr("Marks has be to positive");
+      return;
+    } else if (
+      question.answer.reduce((count, ele) => {
+        return ele ? count + 1 : count;
+      }, 0) < 1
+    ) {
+      setErr("Select atleast one option");
+      return;
+    } else if (question.option_A === "") {
+      setErr("Option A cannot be empty");
+      return;
+    } else if (question.option_B === "") {
+      setErr("Option B cannot be empty");
+      return;
+    } else if (question.option_C === "") {
+      setErr("Option C cannot be empty");
+      return;
+    } else if (question.option_D === "") {
+      setErr("Option D cannot be empty");
+      return;
+    }
+    axios
+      .post("/question/add", question, {
+        headers: {
+          Authorization: "Bearer " + props.token,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        setOpen(false);
+        toast(res.data.message, 4000);
+        setQuestion(initialQuestion);
+      })
+      .catch((err) => {
+        setOpen(false);
+        console.log(err);
+        toast(err.message, 4000);
+      })
+      .finally(() => {
+        setErr("");
       });
   };
   return (
-    <Box className={classes.root}>
-      <Box
-        style={{
-          width: "27%",
-
-          boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-          backgroundColor: "white",
-          padding: "10px",
-          display: "flex",
-          justifyContent: "space-evenly",
-          flexDirection: "column",
-        }}
-      >
-        <Box
-          style={{
-            fontSize: "32px",
-            fontWeight: "bold",
-            marginBottom: "20px",
-            margintop: "20px",
-            height: "15%",
-          }}
-        >
-          Assesment Details
-        </Box>
-
-        <Box style={{ height: "70%" }}>
-          <Typography>Total Marks: {totalMarks}</Typography>
-          <Box className={classes.formElement}>
-            <TextField
-              label="Assesment Name"
-              name="testName"
-              value={exam.testName}
-              onChange={handleChange}
-              fullWidth
-              size="small"
-            />
-          </Box>
-          <Box className={classes.formElement}>
-            <TextField
-              label="Subject"
-              size="small"
-              name="subject"
-              fullWidth
-              value={exam.subject}
-              onChange={handleChange}
-            />
-          </Box>
-
-          <Box className={classes.formElement}>
-            <TextField
-              style={{ marginRight: "5px" }}
-              type="number"
-              label="Passing Marks"
-              size="small"
-              name="passingMarks"
-              value={exam.passingMarks}
-              onChange={handleChange}
-            />
-            <TextField
-              name="duration"
-              value={duration}
-              onChange={handleDuration}
-              type="number"
-              label="Duration (minutes)"
-              size="small"
-            />
-          </Box>
-          <FormLabel className={classes.formElement}>
-            Select Exam Date & Time
-          </FormLabel>
-          <Box className={classes.formElement}>
-            <TextField
-              value={date}
-              type="datetime-local"
-              onChange={handleDate}
-              size="small"
-            />
-          </Box>
-        </Box>
-        <Button
-          className={classes.btn}
-          variant="contained"
-          fullWidth
-          color="primary"
-          onClick={handleSubmit}
-        >
-          Create
-        </Button>
-      </Box>
-
-      <Box
-        style={{
-          marginLeft: "20px",
-          width: "70%",
-          padding: "20px",
-          backgroundColor: "white",
-          boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-        }}
-      >
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "100%",
-
-            marginBottom: "20px",
-          }}
-        >
-          <TextField
-            id="outlined-select-currency"
-            select
-            sx={{ width: "83%" }}
-            label="Select question"
-            size="small"
-            value={pickedQuestion}
-            onChange={handleSelection}
-          >
-            {questionList.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option.questionName}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Button variant="outlined" color="primary" onClick={addQuestion}>
-            Add question
-          </Button>
-        </Box>
-
-        <Box
-          style={{
-            height: "90%",
-            overflowY: "auto",
-          }}
-        >
-          {selectedQuestions.length === 0 && (
-            <Box
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-                fontSize: "36px",
-              }}
-            >
-              No selected questions !!
-            </Box>
-          )}
-          {selectedQuestions.map((curQuestion, ind) => (
-            <Accordion
-              style={{
-                margin: "10px",
-                boxShadow: "0 4px 4px 0 rgb(0 0 0 / 20%)",
-              }}
-            >
-              <AccordionSummary
-                style={{ backgroundColor: "#F8F8F8" }}
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Box
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    paddingLeft: "5px",
-                    paddingRight: "5px",
-                  }}
-                >
-                  <Typography
-                    style={{
-                      display: "block",
-                      fontSize: "20px",
-                    }}
-                  >
-                    <span style={{ fontWeight: "bold" }}>{ind + 1}. </span>{" "}
-                    {curQuestion.questionName}
-                  </Typography>
-                  <Box style={{ display: "flex", flexDirection: "row" }}>
-                    <Typography style={{ marginRight: "10px" }}>
-                      Marks: {curQuestion.marks}
-                    </Typography>
-                    <Divider orientation="vertical" flexItem />
-                    <Typography
-                      style={{ marginLeft: "10px", marginRight: "10px" }}
-                    >
-                      Difficulty: {curQuestion.difficulty}
-                    </Typography>
-                  </Box>
+    <Box className={classes1.root}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+          <Box className={classes1.gridOuter}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Box className={classes.headingLeft}>Test Details</Box>
+              </Grid>
+              <Grid item xs={6}>
+                <Box className={classes.normalParaRight}>
+                  Total Marks: {totalMarks}
                 </Box>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Divider light />
-                <Box style={{ textAlign: "left", padding: "5px" }}>
-                  <Typography className={classes.paragraph}>
-                    {curQuestion.problemStatement}
-                  </Typography>
-                  <Divider light />
-                  <Typography className={classes.paragraph}>
-                    <span>Option A:</span> {curQuestion.option_A}
-                  </Typography>
-
-                  <Typography className={classes.paragraph}>
-                    <span>Option B:</span> {curQuestion.option_B}
-                  </Typography>
-                  <Typography className={classes.paragraph}>
-                    <span>Option C:</span> {curQuestion.option_C}
-                  </Typography>
-                  <Typography className={classes.paragraph}>
-                    <span>Option D:</span> {curQuestion.option_D}
-                  </Typography>
-                  <Divider light />
-                  <Typography className={classes.paragraph}>
-                    <span>Correct Anwers:</span>
-                    {formatAnswer(curQuestion.answer)}
-                  </Typography>
-                  <Divider light />
-                  <Typography className={classes.paragraph}>
-                    <span>Explanation: </span> {curQuestion.explanation}
-                  </Typography>
-                  <Divider light />
-                  <Box style={{ display: "flex", justifyContent: "right" }}>
-                    <Button
-                      className={classes.btn}
-                      variant="outlined"
-                      color="primary"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      className={classes.btn}
-                      variant="contained"
-                      color="primary"
-                      onClick={() => deleteQuestion(ind)}
-                    >
-                      Remove
-                    </Button>
-                  </Box>
-                </Box>
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </Box>
-        {/* {questionList.map((data, key) => (
-          <Box
-            style={{
-              boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-              marginBottom: "20px",
-              backgroundColor: "white",
-              padding: "20px",
-            }}
-          >
-            <Box
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-              }}
-            >
-              <Box className={classes.formElement}>
-                <Typography
-                  style={{
-                    fontSize: "28px",
-                    fontWeight: "bold",
-                    marginRight: "15px",
-                  }}
-                >
-                  {key + 1 + " "}
-                </Typography>
-                <TextField
-                  label="Question Name"
-                  value={data.questionName}
-                  size="small"
-                />
-              </Box>
-              <Box className={classes.formElement}>
-                <TextField label="Difficulty" size="small" />
-                <TextField label="Marks" size="small" />
-              </Box>
-            </Box>
-            {data.options.map((opt) => (
-              <Box className={classes.formElement}>
-                <TextField label="Option" value={opt} fullWidth size="small" />
-              </Box>
-            ))}
-
-            <Box className={classes.formElement}>
-              <TextField label="Correct answer" fullWidth size="small" />
-            </Box>
+              </Grid>
+            </Grid>
             <Box className={classes.formElement}>
               <TextField
-                multiline
-                minRows={3}
-                label="Explanation"
+                label="Test Name"
+                name="testName"
+                value={exam.testName}
+                onChange={handleChange}
                 fullWidth
                 size="small"
               />
             </Box>
+            <Grid container spacing={2} className={classes.formElement}>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  id="outlined-select-currency"
+                  select
+                  fullWidth
+                  label="Select subject"
+                  size="small"
+                  name="subject"
+                  value={exam.subject}
+                  onChange={handleChange}
+                >
+                  {props.userDetails.expertise.split(" ").map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  label="User Activity Threshold"
+                  size="small"
+                  type="number"
+                  name="activityThreshold"
+                  fullWidth
+                  value={exam.activityThreshold}
+                  onChange={handleChange}
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={2} className={classes.formElement}>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Passing Marks"
+                  size="small"
+                  name="passingMarks"
+                  value={exam.passingMarks}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  name="duration"
+                  fullWidth
+                  value={duration}
+                  onChange={handleDuration}
+                  type="number"
+                  label="Duration (minutes)"
+                  size="small"
+                />
+              </Grid>
+            </Grid>
+
+            <Box>
+              <FormLabel className={classes.formElement}>
+                Select Exam Date & Time
+              </FormLabel>
+              <Box className={classes.formElement}>
+                <TextField
+                  value={date}
+                  type="datetime-local"
+                  onChange={handleDate}
+                  size="small"
+                />
+              </Box>
+            </Box>
+            <Grid container spacing={2} className={classes.formElement}>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <Button variant="outlined" fullWidth onClick={handleClickOpen}>
+                  Create Question
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="primary"
+                  onClick={handleSubmit}
+                >
+                  Create Test
+                </Button>
+              </Grid>
+            </Grid>
           </Box>
-        ))} */}
-      </Box>
+        </Grid>
+        <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
+          <Box className={classes1.gridOuter}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={8} md={8} lg={9} xl={9}>
+                <Box>
+                  <TextField
+                    id="outlined-select-currency"
+                    select
+                    fullWidth
+                    label="Select question"
+                    size="small"
+                    value={pickedQuestion}
+                    helperText="Select subject first to filter the questions"
+                    onChange={handleSelection}
+                  >
+                    {questionList.length === 0 && (
+                      <Box style={{ textAlign: "center", padding: "10px" }}>
+                        No previous question found of the selected subject
+                      </Box>
+                    )}
+                    {questionList.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option.questionName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Box>
+              </Grid>
+              <Grid item xs={12} sm={4} md={4} lg={3} xl={3}>
+                <Box>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                    disabled={!pickedQuestion || pickedQuestion === ""}
+                    onClick={addQuestion}
+                  >
+                    Add existing question
+                  </Button>
+                </Box>
+              </Grid>
+            </Grid>
+
+            <Box className={classes1.questionList}>
+              {selectedQuestions.length === 0 && (
+                <Box className={classes.subHeadingCenter}>
+                  No selected questions !!
+                </Box>
+              )}
+              <QuestionList
+                role={props.userDetails.role}
+                questions={selectedQuestions}
+                deleteQuestion={deleteQuestion}
+              ></QuestionList>
+            </Box>
+            <Dialog fullWidth open={open} onClose={handleClose}>
+              <DialogTitle className={classes.subHeadingCenter}>
+                Create Question
+              </DialogTitle>
+              <DialogContentText className={classes.err}>
+                {err}
+              </DialogContentText>
+              <DialogContent>
+                <CreateQuestion
+                  difficulty={difficulty}
+                  question={question}
+                  handleQuestionChange={handleQuestionChange}
+                  handleOptionChecked={handleOptionChecked}
+                  userDetails={props.userDetails}
+                ></CreateQuestion>
+              </DialogContent>
+              <DialogActions>
+                <Button variant="outlined" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button variant="contained" onClick={handleCreateQuestion}>
+                  Create
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </Box>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

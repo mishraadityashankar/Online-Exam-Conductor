@@ -5,7 +5,8 @@ const checkAuth = require("../utils/checkAuth");
 
 // get all
 router.get("/get", checkAuth, (req, res) => {
-  Tests.find({}, (err, totalTests) => {
+  const dateNow = new Date();
+  Tests.find({ endTime: { $gte: dateNow } }, (err, totalTests) => {
     if (err) {
       console.log("error");
     } else {
@@ -14,14 +15,37 @@ router.get("/get", checkAuth, (req, res) => {
   });
 });
 
+router.get("/getByUser", checkAuth, (req, res) => {
+  Tests.find({ createdBy: req.userData.id })
+    .sort({ endTime: -1 })
+    .exec((err, totalTests) => {
+      if (err) {
+        console.log("error");
+      } else {
+        const expiredTests = totalTests.filter(
+          (ele) => new Date(ele.endTime) <= new Date()
+        );
+        const remainingTests = totalTests.filter(
+          (ele) => new Date(ele.endTime) > new Date()
+        );
+        return res.status(200).json({
+          message: "Success",
+          result: { expiredTests, remainingTests },
+        });
+      }
+    });
+});
 //post route
 
 router.post("/add", checkAuth, (req, res) => {
   Tests.create(req.body, (err, newlyCreatedTest) => {
     if (err) {
       console.log(err);
+      return res.status(404).send(err);
     } else {
-      res.status(201).json({ message: "Added", result: newlyCreatedTest });
+      return res
+        .status(201)
+        .json({ message: "Added", result: newlyCreatedTest });
     }
   });
 });
@@ -29,7 +53,6 @@ router.post("/add", checkAuth, (req, res) => {
 // get details
 router.get("/details/:id", checkAuth, (req, res) => {
   Tests.findById(req.params.id)
-    .populate("studentEnrolled")
     .populate("questions")
     .exec((err, foundTest) => {
       if (err) {

@@ -22,6 +22,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axios from "axios";
 import { makeStyles } from "@mui/styles";
+import QuestionList from "./QuestionList";
 
 const useStyles = makeStyles({
   root: {
@@ -31,7 +32,6 @@ const useStyles = makeStyles({
   },
   box: {
     padding: "20px",
-    margin: "20px",
     backgroundColor: "white",
     boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
   },
@@ -99,7 +99,12 @@ function ResultHistory(props) {
   ];
   return (
     <Box
-      style={{ padding: "20px", backgroundColor: "#EBF2F8", height: "90vh" }}
+      style={{
+        padding: "20px",
+        backgroundColor: "#EBF2F8",
+        height: "100vh",
+        overflow: "auto",
+      }}
     >
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
@@ -148,6 +153,7 @@ function ResultHistory(props) {
                 <Grid item xs={6} sm={6} md={12} lg={12} xl={12}>
                   <Box>
                     <VictoryPie
+                      height={300}
                       padAngle={({ datum }) => datum.y}
                       colorScale={["green", "red"]}
                       data={myData}
@@ -197,91 +203,99 @@ function ResultHistory(props) {
               }}
             >
               {selectedResponses && selectedResponses.questions.length ? (
-                selectedResponses.questions.map((curQuestion, ind) => (
-                  <Accordion
-                    style={{
-                      margin: "5px",
-                      boxShadow: "0 4px 4px 0 rgb(0 0 0 / 20%)",
-                    }}
-                  >
-                    <AccordionSummary
-                      style={{ backgroundColor: "#EBF2F8" }}
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <Grid container spacing={2}>
-                        <Grid item xs={10}>
-                          <Typography
-                            style={{
-                              padding: "5px",
-                              fontWeight: "bold",
-                              fontSize: "18px",
-                            }}
-                          >
-                            {ind + 1 + " "}. {curQuestion.questionName}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={2}>
-                          <Typography
-                            style={{
-                              textAlign: "right",
-                              padding: "5px",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Marks: {curQuestion.marks}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Divider light />
-                      <Box style={{ textAlign: "left", padding: "5px" }}>
-                        <Typography className={classes.paragraph}>
-                          {curQuestion.problemStatement}
-                        </Typography>
-                        <Divider light />
-                        <Typography className={classes.paragraph}>
-                          <span>Option A:</span> {curQuestion.option_A}
-                        </Typography>
-
-                        <Typography className={classes.paragraph}>
-                          <span>Option B:</span> {curQuestion.option_B}
-                        </Typography>
-                        <Typography className={classes.paragraph}>
-                          <span>Option C:</span> {curQuestion.option_C}
-                        </Typography>
-                        <Typography className={classes.paragraph}>
-                          <span>Option D:</span> {curQuestion.option_D}
-                        </Typography>
-                        <Divider light />
-                        <Typography className={classes.paragraph}>
-                          <span>Correct Anwers:</span>
-                          {formatAnswer(curQuestion.answer)}
-                        </Typography>
-                        <Divider light />
-                        <Typography className={classes.paragraph}>
-                          <span>Marked Anwers:</span>
-                          {formatMarkedAnswer(
-                            selectedResponses.recordedAnswers[ind]
-                          )}
-                          {/* {formatAnswer(
-                                selectedResponses.recordedAnswers[ind].split(
-                                  ","
-                                )
-                              )} */}
-                        </Typography>
-                        <Divider light />
-                        <Typography className={classes.paragraph}>
-                          <span>Explanation: </span> {curQuestion.explanation}
-                        </Typography>
-                        <Divider light />
-                      </Box>
-                    </AccordionDetails>
-                  </Accordion>
-                ))
+                <QuestionList
+                  questions={selectedResponses.questions}
+                  responses={selectedResponses}
+                ></QuestionList>
               ) : (
+                //(
+
+                //   selectedResponses.questions.map((curQuestion, ind) => (
+                //     <Accordion
+                //       style={{
+                //         margin: "5px",
+                //         boxShadow: "0 4px 4px 0 rgb(0 0 0 / 20%)",
+                //       }}
+                //     >
+                //       <AccordionSummary
+                //         style={{ backgroundColor: "#EBF2F8" }}
+                //         expandIcon={<ExpandMoreIcon />}
+                //         aria-controls="panel1a-content"
+                //         id="panel1a-header"
+                //       >
+                //         <Grid container spacing={2}>
+                //           <Grid item xs={10}>
+                //             <Typography
+                //               style={{
+                //                 padding: "5px",
+                //                 fontWeight: "bold",
+                //                 fontSize: "18px",
+                //               }}
+                //             >
+                //               {ind + 1 + " "}. {curQuestion.questionName}
+                //             </Typography>
+                //           </Grid>
+                //           <Grid item xs={2}>
+                //             <Typography
+                //               style={{
+                //                 textAlign: "right",
+                //                 padding: "5px",
+                //                 fontWeight: "bold",
+                //               }}
+                //             >
+                //               Marks: {curQuestion.marks}
+                //             </Typography>
+                //           </Grid>
+                //         </Grid>
+                //       </AccordionSummary>
+                //       <AccordionDetails>
+                //         <Divider light />
+                //         <Box style={{ textAlign: "left", padding: "5px" }}>
+                //           <Typography className={classes.paragraph}>
+                //             {curQuestion.problemStatement}
+                //           </Typography>
+                //           <Divider light />
+                //           <Typography className={classes.paragraph}>
+                //             <span>Option A:</span> {curQuestion.option_A}
+                //           </Typography>
+
+                //           <Typography className={classes.paragraph}>
+                //             <span>Option B:</span> {curQuestion.option_B}
+                //           </Typography>
+                //           <Typography className={classes.paragraph}>
+                //             <span>Option C:</span> {curQuestion.option_C}
+                //           </Typography>
+                //           <Typography className={classes.paragraph}>
+                //             <span>Option D:</span> {curQuestion.option_D}
+                //           </Typography>
+                //           <Divider light />
+                //           <Typography className={classes.paragraph}>
+                //             <span>Correct Anwers:</span>
+                //             {formatAnswer(curQuestion.answer)}
+                //           </Typography>
+                //           <Divider light />
+                //           <Typography className={classes.paragraph}>
+                //             <span>Marked Anwers:</span>
+                //             {formatMarkedAnswer(
+                //               selectedResponses.recordedAnswers[ind]
+                //             )}
+                //             {/* {formatAnswer(
+                //                   selectedResponses.recordedAnswers[ind].split(
+                //                     ","
+                //                   )
+                //                 )} */}
+                //           </Typography>
+                //           <Divider light />
+                //           <Typography className={classes.paragraph}>
+                //             <span>Explanation: </span> {curQuestion.explanation}
+                //           </Typography>
+                //           <Divider light />
+                //         </Box>
+                //       </AccordionDetails>
+                //     </Accordion>
+                //   ))
+                // ) : (
+
                 <Box>Select Exam</Box>
               )}
             </Box>

@@ -4,7 +4,16 @@ const Questions = require("../models/question_schema");
 const checkauth = require("../utils/checkAuth.js");
 // get all
 router.get("/get", checkauth, (req, res) => {
-  Questions.find({ createdBy: req.userData.id }, (err, totalQuestions) => {
+  const subject = req.query.subject;
+  let conditions = {
+    createdBy: req.userData.id,
+  };
+  if (subject && subject !== "") {
+    console.log(subject);
+    conditions = { ...conditions, subject };
+  }
+  console.log({ ...conditions });
+  Questions.find({ ...conditions }, (err, totalQuestions) => {
     if (err) {
       console.log("error");
     } else {

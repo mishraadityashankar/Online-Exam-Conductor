@@ -70,7 +70,7 @@ function ExamWindow(props) {
     restart,
   } = useTimer({
     expiryTimestamp,
-    onExpire: () => console.log("submitted"),
+    onExpire: () => handleSubmit(),
   });
 
   window.onfocus = function (ev) {
@@ -106,9 +106,10 @@ function ExamWindow(props) {
   }, []);
 
   useEffect(() => {
-    if (count > 300000) {
+    if (count > selectedTest.activityThreshold) {
+      toast(selectedTest);
       toast("Test is ended because of Tab switches");
-      props.setLayout("main");
+      handleSubmit();
     }
   }, [count]);
 
@@ -121,6 +122,7 @@ function ExamWindow(props) {
           else return ele;
         })
       );
+      toast("Saved");
     } else {
       setErrMsg(
         errMsg.map((ele, ind) => {
@@ -150,8 +152,7 @@ function ExamWindow(props) {
     document.documentElement.requestFullscreen().catch((e) => console.log(e));
   };
 
-  const handleSubmit = (id) => {
-    console.log(answers[id]);
+  const handleSubmit = () => {
     let savedAnswers = answers;
     if (localStorage.getItem("Answers")) {
       savedAnswers = JSON.parse(localStorage.getItem("Answers"));
@@ -166,6 +167,7 @@ function ExamWindow(props) {
         {
           responsesId: props.responsesId,
           answers: boolAnswerString,
+          completed: true,
         },
         {
           headers: {
@@ -175,7 +177,6 @@ function ExamWindow(props) {
       )
       .then((res) => {
         toast(res.data.message);
-
         props.setLayout("main");
       })
       .catch((err) => {
@@ -387,7 +388,10 @@ function ExamWindow(props) {
                   </Grid>
                 </Grid>
               </Box>
-              <ChatWindow userDetails={props.username}></ChatWindow>
+              <ChatWindow
+                userDetails={props.username}
+                testId={selectedTest._id}
+              ></ChatWindow>
             </Box>
           </Grid>
         </Grid>

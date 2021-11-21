@@ -37,6 +37,7 @@ const responsesSchema = new Schema({
     required: true,
   },
   passed: { type: Boolean, default: false },
+  completed: { type: Boolean, default: false },
   finishTime: { type: Date, default: Date.now },
 });
 module.exports = mongoose.model("Responses", responsesSchema);

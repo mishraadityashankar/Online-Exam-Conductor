@@ -25,6 +25,7 @@ const testSchema = new Schema({
     },
   ],
   passingMarks: { type: Number, required: true },
+  activityThreshrold: { type: Number, default: 3 },
   expired: { type: Boolean, default: true },
 });
 module.exports = mongoose.model("Test", testSchema);

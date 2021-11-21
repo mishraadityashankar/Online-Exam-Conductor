@@ -23,7 +23,7 @@ function ChatWindow(props) {
     let socket = io();
     const user = props.userDetails;
     setUser(user);
-    socket.emit("join-room", "123", user);
+    socket.emit("join-room", props.testId, user);
     socket.on("createMessage", (userName, msg) => {
       console.log(userName, msg);
       setMessages((oldMessages) => [...oldMessages, { userName, msg }]);
@@ -60,6 +60,7 @@ function ChatWindow(props) {
         <TextField
           label="Ask Question"
           name="testName"
+          fullWidth
           style={{ marginBottom: "20px" }}
           value={input}
           onChange={handleChange}

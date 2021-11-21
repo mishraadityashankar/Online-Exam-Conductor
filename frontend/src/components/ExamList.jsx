@@ -18,7 +18,8 @@ function ExamList(props) {
         if (res.data.message === "Success") {
           const curDateTime = new Date();
           setTestList(
-            res.data.result.filter((ele) => new Date(ele.endTime) > curDateTime)
+            // res.data.result.filter((ele) => new Date(ele.endTime) > curDateTime)
+            res.data.result
           );
           console.log(res.data);
         } else {

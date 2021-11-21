@@ -93,18 +93,22 @@ function ExamDetail(props) {
         },
       })
       .then((res) => {
-        console.log(res.data);
-        toast(res.data.message);
-        props.setResponsesId(res.data.result);
-        props.setLayout("examWindow");
-      })
-      .then(() => {
-        handleFullScreen();
+        if (res.data.result.completed) {
+          toast("Test already attempted");
+          toast("Redirecting to result page", 4000);
+          props.setCurrPage("resultHistory");
+        } else {
+          console.log(res.data);
+          toast(res.data.message);
+          props.setResponsesId(res.data.result._id);
+          props.setLayout("examWindow");
+          handleFullScreen();
+        }
       })
       .catch((err) => {
         console.log(err);
         toast(err.message);
-        // props.setLayout("home");
+        props.setLayout("home");
       });
   };
   const handleFullScreen = () => {

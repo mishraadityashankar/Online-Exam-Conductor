@@ -5,14 +5,18 @@ import CreateQuestion from "./CreateQuestion";
 import EditProfile from "./EditProfile";
 import ExamDetail from "./ExamDetail";
 import ExamList from "./ExamList";
+import ExamListTeacher from "./ExamListTeacher";
 import Navbar from "./Navbar";
 import ResponsesList from "./ResponsesList";
 import ResultHistory from "./ResultHistory";
 import toast from "react-simple-toasts";
+import StudentsResultList from "./StudentsResultList";
+import ExamWindowTeacher from "./ExamWindowTeacher";
 function ContentArea(props) {
   const [userDetails, setUserDetails] = useState(null);
   const [currPage, setCurrPage] = useState("createExam");
   const [curResponses, setCurResponses] = useState(null);
+  const [responseHistory, setResponseHistory] = useState(null);
   const token = localStorage.getItem("OEC_token");
   useEffect(() => {
     axios
@@ -36,7 +40,7 @@ function ContentArea(props) {
         props.setLayout("home");
       });
   }, []);
-  const facultyPage = () => {
+  const renderPage = () => {
     if (currPage === "createQuestion") {
       return (
         <CreateQuestion
@@ -65,7 +69,7 @@ function ContentArea(props) {
         ></EditProfile>
       );
     } else if (currPage === "examList") {
-      return (
+      return userDetails.role === "Student" ? (
         <ExamList
           setLayout={props.setLayout}
           userDetails={userDetails}
@@ -74,9 +78,20 @@ function ContentArea(props) {
           setSelectedTest={props.setSelectedTest}
           setCurrPage={setCurrPage}
         ></ExamList>
+      ) : (
+        <ExamListTeacher
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
+          setCurrPage={setCurrPage}
+          responseHistory={responseHistory}
+          setResponseHistory={setResponseHistory}
+        ></ExamListTeacher>
       );
     } else if (currPage === "examDetails") {
-      return (
+      return userDetails.role === "Student" ? (
         <ExamDetail
           setLayout={props.setLayout}
           userDetails={userDetails}
@@ -87,9 +102,22 @@ function ContentArea(props) {
           setSelectedTest={props.setSelectedTest}
           setCurrPage={setCurrPage}
         ></ExamDetail>
+      ) : (
+        <ExamWindowTeacher
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          responsesId={props.responsesId}
+          setResponsesId={props.setResponsesId}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
+          setCurrPage={setCurrPage}
+          responseHistory={responseHistory}
+          setResponseHistory={setResponseHistory}
+        ></ExamWindowTeacher>
       );
     } else if (currPage === "resultHistory") {
-      return (
+      return userDetails.role === "Student" ? (
         <ResponsesList
           setLayout={props.setLayout}
           userDetails={userDetails}
@@ -100,6 +128,17 @@ function ContentArea(props) {
           curResponses={curResponses}
           setCurResponses={setCurResponses}
         ></ResponsesList>
+      ) : (
+        <StudentsResultList
+          setLayout={props.setLayout}
+          userDetails={userDetails}
+          token={token}
+          selectedTest={props.selectedTest}
+          setSelectedTest={props.setSelectedTest}
+          setCurrPage={setCurrPage}
+          responseHistory={responseHistory}
+          setResponseHistory={setResponseHistory}
+        ></StudentsResultList>
       );
     } else if (currPage === "singleResponses") {
       return (
@@ -128,7 +167,7 @@ function ContentArea(props) {
             currPage={currPage}
             setCurrPage={setCurrPage}
           ></Navbar>
-          {facultyPage()}
+          {renderPage()}
         </div>
       );
     } else return <div>Loading</div>;

@@ -59,6 +59,7 @@ function Navbar(props) {
           }}
         >
           <Box onClick={() => props.setLayout("register")}>Register</Box>
+          <Box onClick={() => props.setCurrPage("examList")}>Exam List</Box>
           <Box onClick={handleBox1}>
             {userDetails.role === "Student" ? "Exam List" : "Create Question"}
           </Box>

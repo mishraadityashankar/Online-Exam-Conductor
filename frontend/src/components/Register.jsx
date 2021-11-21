@@ -90,7 +90,7 @@ function Register(props) {
     else if (!validateExpertise(user.expertise))
       setErrMsg("Expertise Subjects should be separated by single space");
     else if (user.password === "" || user.name === "" || user.address === "")
-      setErrMsg("Required field cannot be empty");
+      setErrMsg("A required field cannot be empty");
     else {
       axios
         .post("/user/register", user)
@@ -98,6 +98,7 @@ function Register(props) {
           console.log(res.data);
           toast(res.data.message);
           setUser(intialState);
+          setErrMsg("");
         })
         .catch((err) => console.log(err));
     }
@@ -243,6 +244,7 @@ function Register(props) {
                 fullWidth
                 name="expertise"
                 size="small"
+                helperText="Add space-separated assigned subjects"
                 value={user.expertise}
                 onChange={handleChange}
               />
@@ -260,7 +262,7 @@ function Register(props) {
                   padding: "10px",
                 }}
               >
-                Submit
+                Register
               </Button>
             </Grid>
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
