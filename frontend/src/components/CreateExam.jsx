@@ -20,18 +20,20 @@ import { commonStyles, createExamStyles } from "../styles/CommonStyle";
 import CreateQuestion from "./CreateQuestion";
 
 function CreateExam(props) {
+  const isEditing = props.editTestDetails ? true : false;
+  const prevTest = props.editTestDetails;
   const initialExam = {
-    testName: "",
+    testName: isEditing ? prevTest.testName : "",
     questions: [],
     createdBy: props.userDetails._id,
     startTime: "",
     endTime: "",
-    subject: "",
-    passingMarks: 0,
-    totalMarks: 0,
+    subject: isEditing ? prevTest.subject : "",
+    passingMarks: isEditing ? prevTest.passingMarks : 0,
+    totalMarks: isEditing ? prevTest.totalMarks : 0,
     studentEnrolled: [],
-    expired: false,
-    activityThreshold: 3,
+    expired: isEditing ? prevTest.expired : false,
+    activityThreshold: isEditing ? prevTest.activityThreshold : 3,
   };
   const initialQuestion = {
     questionName: "",
@@ -55,8 +57,12 @@ function CreateExam(props) {
   const [questionList, setQuestionList] = useState([]);
   const [totalQuestionList, setTotalQuestionList] = useState([]);
   const [pickedQuestion, setPickedQuestion] = useState(null);
-  const [selectedQuestions, setSelectedQuestions] = useState([]);
-  const [totalMarks, setTotalMarks] = useState(0);
+  const [selectedQuestions, setSelectedQuestions] = useState(
+    isEditing ? prevTest.questions : []
+  );
+  const [totalMarks, setTotalMarks] = useState(
+    isEditing ? prevTest.totalMarks : 0
+  );
   const [duration, setDuration] = useState(0);
   const [date, setDate] = useState("");
   const difficulty = ["Easy", "Medium", "Hard"];
@@ -72,7 +78,8 @@ function CreateExam(props) {
     setErr("");
     setQuestion(initialQuestion);
   };
-  useEffect(() => {
+
+  const fetchQuestions = () => {
     axios
       .get("/question/get", {
         headers: {
@@ -96,6 +103,9 @@ function CreateExam(props) {
         toast(err.message);
         props.setLayout("home");
       });
+  };
+  useEffect(() => {
+    fetchQuestions();
   }, [exam.subject]);
 
   useEffect(() => {
@@ -175,8 +185,11 @@ function CreateExam(props) {
       questions: questions,
       totalMarks: totalMarks,
     };
+    const url = isEditing
+      ? "/test/update/" + prevTest._id + "/" + props.userDetails._id
+      : "/test/add";
     axios
-      .post("/test/add", reqBody, {
+      .post(url, reqBody, {
         headers: {
           Authorization: "Bearer " + props.token,
         },
@@ -186,9 +199,13 @@ function CreateExam(props) {
         setExam(initialExam);
         setDate("");
         setDuration(0);
+        setTotalMarks(0);
         setPickedQuestion(null);
         setSelectedQuestions([]);
         toast(res.data.message);
+        if (isEditing) {
+          props.setCurrPage("examList");
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -253,6 +270,7 @@ function CreateExam(props) {
         setOpen(false);
         toast(res.data.message, 4000);
         setQuestion(initialQuestion);
+        fetchQuestions();
       })
       .catch((err) => {
         setOpen(false);
@@ -370,7 +388,7 @@ function CreateExam(props) {
                   color="primary"
                   onClick={handleSubmit}
                 >
-                  Create Test
+                  {isEditing ? "Update Test" : "Create Test"}
                 </Button>
               </Grid>
             </Grid>
@@ -421,16 +439,17 @@ function CreateExam(props) {
             </Grid>
 
             <Box className={classes1.questionList}>
-              {selectedQuestions.length === 0 && (
+              {selectedQuestions.length === 0 ? (
                 <Box className={classes.subHeadingCenter}>
                   No selected questions !!
                 </Box>
+              ) : (
+                <QuestionList
+                  role={props.userDetails.role}
+                  questions={selectedQuestions}
+                  deleteQuestion={deleteQuestion}
+                ></QuestionList>
               )}
-              <QuestionList
-                role={props.userDetails.role}
-                questions={selectedQuestions}
-                deleteQuestion={deleteQuestion}
-              ></QuestionList>
             </Box>
             <Dialog fullWidth open={open} onClose={handleClose}>
               <DialogTitle className={classes.subHeadingCenter}>

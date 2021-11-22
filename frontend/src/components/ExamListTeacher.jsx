@@ -27,7 +27,7 @@ function ExamList(props) {
     setChecked((prev) => !prev);
   };
 
-  useEffect(() => {
+  const fetchTests = () => {
     axios
       .get("/test/getByUser", {
         headers: {
@@ -48,8 +48,20 @@ function ExamList(props) {
         props.setLayout("home");
       })
       .finally(() => setLoading(false));
+  };
+  useEffect(() => {
+    fetchTests();
   }, []);
 
+  //   useEffect(() => {
+  //     if (!loading) {
+  //       if (checked) {
+  //         setDisplayTest(testList.expiredTests);
+  //       } else {
+  //         setDisplayTest(testList.remainingTests);
+  //       }
+  //     }
+  //   }, [testList]);
   useEffect(() => {
     if (!loading) {
       if (checked) {
@@ -60,6 +72,42 @@ function ExamList(props) {
     }
   }, [checked]);
 
+  const handleDelete = (testId) => {
+    axios
+      .delete("/test/delete/" + testId + "/" + props.userDetails._id, {
+        headers: {
+          Authorization: "Bearer " + props.token,
+        },
+      })
+      .then((res) => {
+        toast(res.data.message);
+        fetchTests();
+      })
+      .catch((err) => {
+        console.log(err);
+        toast(err.message);
+        // props.setLayout("home");
+      });
+  };
+  const handleEdit = (testId) => {
+    axios
+      .get("/test/fullDetails/" + testId + "/" + props.userDetails._id, {
+        headers: {
+          Authorization: "Bearer " + props.token,
+        },
+      })
+      .then((res) => {
+        toast(res.data.message);
+        console.log(res.data.result);
+        props.setEditTestDetails(res.data.result);
+        props.setCurrPage("createExam");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast(err.message);
+        // props.setLayout("home");
+      });
+  };
   const handleEnter = (curTest) => {
     props.setSelectedTest(curTest);
     props.setCurrPage("examDetails");
@@ -181,6 +229,7 @@ function ExamList(props) {
                         <IconButton
                           size="small"
                           aria-label="edit"
+                          onClick={() => handleEdit(ele._id)}
                           disabled={checked}
                         >
                           <EditIcon />
@@ -188,6 +237,7 @@ function ExamList(props) {
                         <IconButton
                           size="small"
                           aria-label="delete"
+                          onClick={() => handleDelete(ele._id)}
                           disabled={checked}
                         >
                           <DeleteIcon />

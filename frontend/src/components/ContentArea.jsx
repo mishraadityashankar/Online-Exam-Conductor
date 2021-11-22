@@ -17,6 +17,7 @@ function ContentArea(props) {
   const [currPage, setCurrPage] = useState("createExam");
   const [curResponses, setCurResponses] = useState(null);
   const [responseHistory, setResponseHistory] = useState(null);
+  const [editTestDetails, setEditTestDetails] = useState(null);
   const token = localStorage.getItem("OEC_token");
   useEffect(() => {
     axios
@@ -55,6 +56,9 @@ function ContentArea(props) {
           setLayout={props.setLayout}
           userDetails={userDetails}
           token={token}
+          editTestDetails={editTestDetails}
+          setCurrPage={setCurrPage}
+          setEditTestDetails={setEditTestDetails}
         ></CreateExam>
       );
     } else if (currPage === "editProfile") {
@@ -88,6 +92,8 @@ function ContentArea(props) {
           setCurrPage={setCurrPage}
           responseHistory={responseHistory}
           setResponseHistory={setResponseHistory}
+          editTestDetails={editTestDetails}
+          setEditTestDetails={setEditTestDetails}
         ></ExamListTeacher>
       );
     } else if (currPage === "examDetails") {

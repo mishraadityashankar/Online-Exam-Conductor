@@ -57,29 +57,67 @@ router.get("/details/:id", checkAuth, (req, res) => {
     .exec((err, foundTest) => {
       if (err) {
         console.log(err);
+        return res.status(404).send(err);
       } else {
-        res.status(200).json({ message: "Success", result: foundTest });
+        return res.status(200).json({ message: "Success", result: foundTest });
       }
     });
 });
 
-router.post("/update/:id", (req, res) => {
-  Tests.findByIdAndUpdate(req.params.id, req.body, (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.status(200).json({ message: "updated" });
-    }
-  });
+router.get("/fullDetails/:testId/:createrId", checkAuth, (req, res) => {
+  if (req.params.createrId !== req.userData.id) {
+    return res.status(403).json({
+      message: "Not authorized",
+    });
+  } else {
+    Tests.findById(req.params.testId)
+      .populate("questions")
+      .exec((err, foundTest) => {
+        if (err) {
+          console.log(err);
+          return res.status(404).send(err);
+        } else {
+          return res
+            .status(200)
+            .json({ message: "Success", result: foundTest });
+        }
+      });
+  }
+});
+
+router.post("/update/:testId/:createrId", checkAuth, (req, res) => {
+  if (req.params.createrId !== req.userData.id) {
+    return res.status(403).json({
+      message: "Not authorized",
+    });
+  } else {
+    Tests.findByIdAndUpdate(req.params.testId, req.body, (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(404).send(err);
+      } else {
+        return res.status(200).json({ message: "updated" });
+      }
+    });
+  }
 });
 //delete route
-router.delete("/delete/:id", (req, res) => {
-  Tests.findByIdAndRemove(req.params.id, (err, deletedTest) => {
-    if (err) {
-      console.log("err is " + err);
-    } else {
-      res.status(200).json({ message: "deleted", result: deletedTest });
-    }
-  });
+router.delete("/delete/:testId/:createrId", checkAuth, (req, res) => {
+  console.log(req.params.createrId, req.userData.id);
+  if (req.params.createrId !== req.userData.id) {
+    return res.status(403).json({
+      message: "Not authorized",
+    });
+  } else {
+    Tests.findByIdAndRemove(req.params.testId, (err, deletedTest) => {
+      if (err) {
+        return res.status(404).send(err);
+      } else {
+        return res
+          .status(200)
+          .json({ message: "deleted", result: deletedTest });
+      }
+    });
+  }
 });
 module.exports = router;
