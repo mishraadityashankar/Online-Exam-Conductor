@@ -1,67 +1,20 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  getIconButtonUtilityClass,
-  Grid,
-  Typography,
-} from "@mui/material";
+import React, { useState } from "react";
+import { Box, Button, Grid, Typography, Divider } from "@mui/material";
 import { useTimer } from "react-timer-hook";
-
-import { makeStyles } from "@mui/styles";
+import moment from "moment";
 import axios from "axios";
 import toast from "react-simple-toasts";
-
-const useStyles = makeStyles({
-  root: {
-    padding: "20px",
-    textAlign: "left",
-  },
-  box: {
-    padding: "20px",
-    backgroundColor: "#EBF2F8",
-    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-  },
-  card: {
-    width: "70%",
-    padding: "10px",
-    alignContent: "left",
-    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-  },
-  formElement: {
-    margin: "10px",
-    fontSize: "14px",
-    "& span": {
-      fontSize: "18px",
-      fontWeight: "bold",
-    },
-  },
-  btn: {
-    margin: "10px",
-  },
-});
+import { examDetailsStyles } from "../styles/ExamStyle";
 
 function ExamDetail(props) {
-  // const expireTime = new Date(props.selectedTest.startTime);
   const expiryTimestamp = new Date(props.selectedTest.startTime);
   const [isDisable, setIsDisable] = useState(true);
-
-  const {
-    seconds,
-    minutes,
-    hours,
-    days,
-    isRunning,
-    start,
-    pause,
-    resume,
-    restart,
-  } = useTimer({
+  const { seconds, minutes, hours, days } = useTimer({
     expiryTimestamp,
     onExpire: () => setIsDisable(false),
   });
-  console.log(expiryTimestamp, props.selectedTest.startTime);
-  const classes = useStyles();
+
+  const classes = examDetailsStyles();
   const newResponses = {
     testId: props.selectedTest._id,
     testName: props.selectedTest.testName,
@@ -72,19 +25,30 @@ function ExamDetail(props) {
     recordedAnswers: [],
   };
   const instructions = [
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "It is an Online Examination system, fully computerized, user friendly having advanced security features making it fair, transparent and standardized",
+    "The examination does not require using any paper, pen, pencil and calculator.",
+    "Every student will take the examination on a Laptop/Desktop/Smart Phone",
+    "Student can enter the exam only after start time of exam is reached",
+    "Student have to give exam in FULL SCREEN MODE and in any case if student exit from full screen, all the questions will be disabled and he/she needs to click on FULL SCREEN BUTTON to resume",
+    "On computer screen every student will be given objective type Multiple Correct Questions and students needs to select appropriate set of answers by clicking the checkboxes",
+    "Student can save there progress by clicking the 'SAVE' button",
+    "Student can resume the test before the end time is reached, if due to some reasons exit from the test window",
+    "There will be NO NEGATIVE MARKING for the wrong answers.",
+    "Students can use 'ASK DOUBT' section to ask any doubt in between the examination",
+    "The system automatically shuts down when the time limit is over OR when unfair activities recorded AND if examinee finishes the exam before time he can quit by pressing the 'End Test' button. The students don’t click the 'END TEST' Button until the student want to quit from Examination",
+    "Once the examination is over student can see the results by navigating to the 'MY GRADES' section",
   ];
 
-  //   useEffect(() => {
-  //     console.log(document.fullscreenElement);
-  //     if (!document.fullscreenElement) {
-  //       toast("enter full screen");
-  //     }
-  //   }, [document.fullscreenElement]);
+  const getDuration = (startTime, endTime) => {
+    let m1 = moment(startTime);
+    let m2 = moment(endTime);
+    let m3 = m2.diff(m1, "minutes");
+    return m3 + " min";
+  };
 
+  const handleFullScreen = () => {
+    document.documentElement.requestFullscreen().catch((e) => console.log(e));
+  };
   const handleStart = (e) => {
     axios
       .post("/responses/create", newResponses, {
@@ -111,90 +75,75 @@ function ExamDetail(props) {
         props.setLayout("home");
       });
   };
-  const handleFullScreen = () => {
-    document.documentElement.requestFullscreen().catch((e) => console.log(e));
-  };
 
   return (
     <Box className={classes.root}>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+        <Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
           <Box className={classes.box}>
+            <Typography className={classes.heading1}>Exam Details</Typography>
+            <Divider />
             <Typography className={classes.formElement}>
-              <span>Test ID: </span> {props.selectedTest._id}
+              <span>Test Name </span> {props.selectedTest.testName}
             </Typography>
             <Typography className={classes.formElement}>
-              <span>Test Name: </span> {props.selectedTest.testName}
-            </Typography>
-            <Typography className={classes.formElement}>
-              <span>Subject: </span> {props.selectedTest.subject}
-            </Typography>
-
-            <Typography className={classes.formElement}>
-              <span>Date: </span>25/89/190
+              <span>Subject </span> {props.selectedTest.subject}
             </Typography>
 
             <Typography className={classes.formElement}>
-              <span>Time: </span>5:40
+              <span>Date </span>
+              {moment(props.selectedTest.startTime).format("YYYY-MM-DD")}
             </Typography>
 
             <Typography className={classes.formElement}>
-              <span> Duration: </span>45 min
-            </Typography>
-            <Typography className={classes.formElement}>
-              <span> Created By: </span>Santosh Rathore{" "}
+              <span>Time </span>
+              {moment(props.selectedTest.startTime).format("HH:mm")}
             </Typography>
 
             <Typography className={classes.formElement}>
-              <span>Starts in: </span>
-              <span>{days}</span>:<span>{hours}</span>:<span>{minutes}</span>:
-              <span>{seconds}</span>
+              <span> Duration </span>
+              {getDuration(
+                props.selectedTest.startTime,
+                props.selectedTest.endTime
+              )}
+            </Typography>
+            <Typography className={classes.formElement}>
+              <span> Total Marks </span>
+              {props.selectedTest.totalMarks}
+            </Typography>
+            <Typography className={classes.formElement}>
+              <span> Passing Marks </span>
+              {props.selectedTest.passingMarks}
             </Typography>
 
-            <Grid container spacing={2} style={{ marginBottom: "20px" }}>
-              <Grid item xs={6}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  disabled={isDisable}
-                  onClick={handleStart}
-                  // onClick={() => deleteQuestion(ind)}
-                >
-                  Start Exam
-                </Button>
-              </Grid>
-              <Grid item xs={6}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  onClick={handleFullScreen}
-                  // onClick={() => deleteQuestion(ind)}
-                >
-                  Enter Full Screen
-                </Button>
-              </Grid>
-            </Grid>
+            <Typography className={classes.formElement}>
+              <span>Starts in </span>
+              {days}:{hours}:{minutes}:{seconds}
+            </Typography>
+
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={isDisable}
+              onClick={handleStart}
+            >
+              Enter Exam
+            </Button>
           </Box>
         </Grid>
-        <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
-          <Box style={{ padding: "20px" }}>
-            <Typography
-              style={{
-                fontSize: "24px",
-                marginBottom: "20px",
-                fontWeight: "bold",
-              }}
-            >
-              Instructions
-            </Typography>
-            {instructions.map((ele, ind) => (
-              <Typography style={{ marginBottom: "20px" }}>
-                <span>{ind + 1 + " "}</span>
-                {ele}
-              </Typography>
-            ))}
+        <Grid item xs={12} sm={12} md={8} lg={9} xl={9}>
+          <Box className={classes.box}>
+            <Typography className={classes.heading2}>Instructions</Typography>
+            <Divider />
+            <Box className={classes.instructionsBox}>
+              {instructions.map((ele, ind) => (
+                <Typography className={classes.typo}>
+                  <span>{ind + 1 + ". "}</span>
+                  {ele}
+                </Typography>
+              ))}
+            </Box>
           </Box>
         </Grid>
       </Grid>

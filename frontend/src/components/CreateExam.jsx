@@ -448,6 +448,7 @@ function CreateExam(props) {
                   role={props.userDetails.role}
                   questions={selectedQuestions}
                   deleteQuestion={deleteQuestion}
+                  page="createExam"
                 ></QuestionList>
               )}
             </Box>

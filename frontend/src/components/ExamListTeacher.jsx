@@ -16,8 +16,10 @@ import moment from "moment";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-simple-toasts";
+import { examListStyles } from "../styles/ExamStyle";
 
 function ExamList(props) {
+  const classes = examListStyles();
   const [loading, setLoading] = useState(true);
   const [testList, setTestList] = useState(null);
   const [displayTest, setDisplayTest] = useState([]);
@@ -53,15 +55,6 @@ function ExamList(props) {
     fetchTests();
   }, []);
 
-  //   useEffect(() => {
-  //     if (!loading) {
-  //       if (checked) {
-  //         setDisplayTest(testList.expiredTests);
-  //       } else {
-  //         setDisplayTest(testList.remainingTests);
-  //       }
-  //     }
-  //   }, [testList]);
   useEffect(() => {
     if (!loading) {
       if (checked) {
@@ -86,7 +79,7 @@ function ExamList(props) {
       .catch((err) => {
         console.log(err);
         toast(err.message);
-        // props.setLayout("home");
+        props.setLayout("home");
       });
   };
   const handleEdit = (testId) => {
@@ -105,7 +98,7 @@ function ExamList(props) {
       .catch((err) => {
         console.log(err);
         toast(err.message);
-        // props.setLayout("home");
+        props.setLayout("home");
       });
   };
   const handleEnter = (curTest) => {
@@ -160,23 +153,9 @@ function ExamList(props) {
 
   const noTest = () => {
     return (
-      <Box
-        style={{
-          display: "flex",
-          height: "60vh",
-
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <Box className={classes.notest}>
         <Box>
-          <Typography
-            style={{
-              fontSize: "28px",
-              fontWeight: "bold",
-              marginBottom: "20px",
-            }}
-          >
+          <Typography className={classes.notestTypo}>
             {" "}
             No {checked ? "expired " : "remaining "}test found
           </Typography>
@@ -208,19 +187,10 @@ function ExamList(props) {
             {displayTest.length === 0 && noTest()}
             {displayTest.map((ele, ind) => (
               <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
-                <Box
-                  style={{
-                    borderRadius: "5px",
-                    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-                    padding: "20px",
-                    backgroundColor: "#F5F5F5",
-                  }}
-                >
-                  <Grid container spacing={2} style={{ marginBottom: "20px" }}>
+                <Box className={classes.box}>
+                  <Grid container spacing={2} className={classes.typo}>
                     <Grid item xs={9}>
-                      <Typography
-                        style={{ fontSize: "18px", marginBottom: "20px" }}
-                      >
+                      <Typography className={classes.heading1}>
                         Test Name : {ele.testName}
                       </Typography>
                     </Grid>
@@ -246,7 +216,7 @@ function ExamList(props) {
                     </Grid>
                   </Grid>
 
-                  <Grid container spacing={2} style={{ marginBottom: "20px" }}>
+                  <Grid container spacing={2} className={classes.typo}>
                     <Grid item xs={6}>
                       <Typography>Subject: {ele.subject}</Typography>
                     </Grid>
@@ -257,7 +227,7 @@ function ExamList(props) {
                     </Grid>
                   </Grid>
 
-                  <Grid container spacing={2} style={{ marginBottom: "20px" }}>
+                  <Grid container spacing={2} className={classes.typo}>
                     <Grid item xs={6}>
                       <Typography>
                         Start Date: {moment(ele.startTime).format("YYYY-MM-DD")}
@@ -271,12 +241,10 @@ function ExamList(props) {
                   </Grid>
                   {checked ? (
                     <Button
-                      //className={classes.btn}
                       fullWidth
                       variant="contained"
                       color="primary"
                       onClick={() => getResults(ele._id)}
-                      // onClick={() => deleteQuestion(ind)}
                     >
                       Results
                     </Button>
@@ -298,7 +266,7 @@ function ExamList(props) {
       );
     }
   };
-  return <Box style={{ padding: "20px", textAlign: "left" }}>{content()}</Box>;
+  return <Box className={classes.root}>{content()}</Box>;
 }
 
 export default ExamList;

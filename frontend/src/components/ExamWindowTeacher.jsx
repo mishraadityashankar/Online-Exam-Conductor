@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
-
 import { useTimer } from "react-timer-hook";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axios from "axios";
-import { makeStyles } from "@mui/styles";
+import { examWindowTeacherStyles } from "../styles/ExamStyle";
 import ChatWindow from "./ChatWindow";
 import QuestionList from "./QuestionList";
 import toast from "react-simple-toasts";
+import moment from "moment";
 import {
   Box,
-  Button,
   Grid,
   Typography,
-  Checkbox,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  TextField,
   Divider,
   CircularProgress,
 } from "@mui/material";
 
 function ExamWindowTeacher(props) {
+  const classes = examWindowTeacherStyles();
   const [loading, setLoading] = useState(true);
   const [startTest, setStartTest] = useState(false);
   const selectedTest = props.selectedTest;
@@ -37,7 +31,12 @@ function ExamWindowTeacher(props) {
     expiryTimestamp: expiryTimestamp2,
     onExpire: () => handleTestEnd(),
   });
-
+  const getDuration = (startTime, endTime) => {
+    let m1 = moment(startTime);
+    let m2 = moment(endTime);
+    let m3 = m2.diff(m1, "minutes");
+    return m3 + " min";
+  };
   useEffect(() => {
     axios
       .get("/test/details/" + props.selectedTest._id, {
@@ -75,6 +74,7 @@ function ExamWindowTeacher(props) {
           window.scrollTo({ top: 0 });
         } else {
           toast(res.data.message);
+          props.setCurrPage("examList");
         }
       })
       .catch((err) => {
@@ -107,88 +107,65 @@ function ExamWindowTeacher(props) {
       Loader();
     } else {
       return (
-        <Box>
+        <Box className={classes.root}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-              <Box>
-                <Box
-                  style={{
-                    marginBottom: "20px",
-                    backgroundColor: "white",
-                    padding: "20px",
-                  }}
-                >
-                  <Box
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <Typography
-                      style={{ fontSize: "24px", fontWeight: "bold" }}
-                    >
-                      {selectedTest.testName}
-                    </Typography>
-                  </Box>
-                  <Box
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography
-                      style={{
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      Total Marks: {selectedTest.totalMarks}
-                    </Typography>
-                    <Typography
-                      style={{
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      Subject: {selectedTest.subject}
+              <Box className={classes.box}>
+                <Box>
+                  <Box>
+                    <Typography className={classes.heading2}>
+                      {"Test Name | " + props.selectedTest.testName}
                     </Typography>
                   </Box>
                   <Box>
-                    {!startTest ? (
-                      <Typography>
-                        Starts in: <span>{days}</span>:<span>{hours}</span>:
-                        <span>{minutes}</span>:<span>{seconds}</span>
-                      </Typography>
-                    ) : (
-                      <Typography>
-                        Ends in: <span>{endTimer.days}</span>:
-                        <span>{endTimer.hours}</span>:
-                        <span>{endTimer.minutes}</span>:
-                        <span>{endTimer.seconds}</span>
-                      </Typography>
-                    )}
+                    <Typography className={classes.formElement}>
+                      {"Total Marks  " + props.selectedTest.totalMarks}
+                    </Typography>
                   </Box>
-                  {startTest ? (
-                    <ChatWindow
-                      userDetails={props.userDetails.name}
-                      testId={selectedTest._id}
-                    ></ChatWindow>
+                  <Divider />
+                  <Typography className={classes.formElement}>
+                    <span>Subject </span> {props.selectedTest.subject}
+                  </Typography>
+                  <Typography className={classes.formElement}>
+                    <span> Duration </span>
+                    {getDuration(
+                      props.selectedTest.startTime,
+                      props.selectedTest.endTime
+                    )}
+                  </Typography>
+                  {!startTest ? (
+                    <Typography className={classes.formElement}>
+                      <span>Starts in </span> {days}:{hours}:{minutes}:{seconds}
+                    </Typography>
                   ) : (
-                    <Box>Test not started yet</Box>
+                    <Typography className={classes.formElement}>
+                      <span>Ends in </span>
+                      {endTimer.days}:{endTimer.hours}:{endTimer.minutes}:
+                      {endTimer.seconds}
+                    </Typography>
                   )}
                 </Box>
               </Box>
+              <Box className={classes.chatBox}>
+                {startTest ? (
+                  <ChatWindow
+                    userDetails={props.userDetails.name}
+                    testId={selectedTest._id}
+                  ></ChatWindow>
+                ) : (
+                  <Box className={classes.heading1}>Test not started yet</Box>
+                )}
+              </Box>
             </Grid>
             <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
-              <Box>
-                <QuestionList
-                  role={props.userDetails.role}
-                  questions={testDetails.questions}
-                  deleteQuestion={() => console.log("Deleted")}
-                ></QuestionList>
+              <Box className={classes.outerBox}>
+                <Box className={classes.questionList}>
+                  <QuestionList
+                    role={props.userDetails.role}
+                    questions={testDetails.questions}
+                    deleteQuestion={() => console.log("Deleted")}
+                  ></QuestionList>
+                </Box>
               </Box>
             </Grid>
           </Grid>

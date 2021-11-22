@@ -15,34 +15,8 @@ import { makeStyles } from "@mui/styles";
 import ClearIcon from "@mui/icons-material/Clear";
 import axios from "axios";
 import toast from "react-simple-toasts";
+import { registerStyle } from "../styles/CommonStyle";
 
-const useStyles = makeStyles({
-  root: {
-    display: "flex",
-    backgroundColor: "lightblue",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
-  },
-  card: {
-    width: "60%",
-    padding: "10px",
-    height: "85%",
-    overflow: "auto",
-    alignContent: "left",
-    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-  },
-  formElement: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "10px",
-  },
-  btn: {
-    width: "50%",
-    marginTop: "20px",
-  },
-});
 const intialState = {
   email: "",
   password: "",
@@ -71,7 +45,7 @@ function validateExpertise(subjects) {
   return re.test(subjects);
 }
 function Register(props) {
-  const classes = useStyles();
+  const classes = registerStyle();
   const [user, setUser] = useState(intialState);
   const [errMsg, setErrMsg] = useState("");
 
@@ -107,15 +81,7 @@ function Register(props) {
     <Box className={classes.root}>
       <Card className={classes.card}>
         <CardContent>
-          <Box
-            style={{
-              fontSize: "32px",
-              fontWeight: "bold",
-              marginBottom: "20px",
-            }}
-          >
-            Register
-          </Box>
+          <Box className={classes.head}>Register</Box>
 
           <Box className={classes.formElement}>
             <Grid container spacing={2}>
@@ -250,32 +216,26 @@ function Register(props) {
               />
             </Box>
           )}
-          <Typography style={{ color: "red" }}>{errMsg}</Typography>
-          <Grid container spacing={2} style={{ marginTop: "20px" }}>
+          <Typography className={classes.err}>{errMsg}</Typography>
+          <Grid container spacing={2} className={classes.formElement}>
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-              <Button
-                variant="contained"
-                fullWidth
-                color="success"
-                onClick={handleSubmit}
-                style={{
-                  padding: "10px",
-                }}
-              >
-                Register
-              </Button>
+              <Box>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="success"
+                  onClick={handleSubmit}
+                >
+                  Register
+                </Button>
+              </Box>
             </Grid>
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-              <Button
-                variant="outlined"
-                fullWidth
-                style={{
-                  padding: "10px",
-                }}
-                onClick={goToHome}
-              >
-                Go to login
-              </Button>
+              <Box>
+                <Button variant="outlined" fullWidth onClick={goToHome}>
+                  Go to login
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </CardContent>

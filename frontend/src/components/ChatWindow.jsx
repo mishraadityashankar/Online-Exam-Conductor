@@ -1,24 +1,16 @@
-import React, { useEffect, useState, useCallback } from "react";
-import {
-  Box,
-  Button,
-  getIconButtonUtilityClass,
-  Grid,
-  Typography,
-  Checkbox,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  TextField,
-  Divider,
-} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Button, Grid, Typography, TextField } from "@mui/material";
 import io from "socket.io-client";
+import { commonStyles, chatWindowStyles } from "../styles/CommonStyle";
 
 function ChatWindow(props) {
+  const classes1 = commonStyles();
+  const classes2 = chatWindowStyles();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState();
   const [user, setUser] = useState("");
+
   useEffect(() => {
     let socket = io();
     const user = props.userDetails;
@@ -46,59 +38,36 @@ function ChatWindow(props) {
   };
 
   return (
-    <div>
-      <Typography
-        style={{
-          fontSize: "26px",
-          fontWeight: "bold",
-          marginBottom: "20px",
-        }}
-      >
-        Ask Doubt
+    <Box className={classes2.root}>
+      <Typography className={classes1.subHeadingCenter}>
+        Query Section
       </Typography>
-      <Box style={{ display: "flex", justifyItems: "space-between" }}>
-        <TextField
-          label="Ask Question"
-          name="testName"
-          fullWidth
-          style={{ marginBottom: "20px" }}
-          value={input}
-          onChange={handleChange}
-          size="small"
-        />
-        <Button variant="contained" onClick={handleSend}>
-          Send
-        </Button>
-      </Box>
-      <Box
-        style={{
-          backgroundColor: "white",
-          padding: "20px",
-          height: "270px",
-          overflow: "auto",
-        }}
-      >
+      <Grid container spacing={2} className={classes1.formElement}>
+        <Grid item xs={9}>
+          <TextField
+            label="Ask Question"
+            name="testName"
+            fullWidth
+            value={input}
+            onChange={handleChange}
+            size="small"
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Button fullWidth variant="contained" onClick={handleSend}>
+            Send
+          </Button>
+        </Grid>
+      </Grid>
+      <Box className={classes2.chatBox}>
         {messages.map((ele) => (
-          <Box>
-            <Typography
-              style={{
-                fontSize: "16px",
-                fontWeight: "bold",
-              }}
-            >
-              {ele.userName}
-            </Typography>
-            <Typography
-              style={{
-                fontSize: "16px",
-              }}
-            >
-              {ele.msg}
-            </Typography>
+          <Box className={classes2.msgBox}>
+            <Typography className={classes2.typo1}>{ele.userName}</Typography>
+            <Typography className={classes2.typo2}>{ele.msg}</Typography>
           </Box>
         ))}
       </Box>
-    </div>
+    </Box>
   );
 }
 

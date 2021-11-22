@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Table,
-  Button,
   Typography,
   TableBody,
   TableCell,
@@ -13,75 +12,38 @@ import {
   Grid,
 } from "@mui/material";
 
-import axios from "axios";
 import moment from "moment";
-import toast from "react-simple-toasts";
+import { studentResultStyles } from "../styles/StudentStyle";
 
 function StudentsResultList(props) {
+  const classes = studentResultStyles();
   return (
-    <Box
-      style={{
-        padding: "20px",
-        height: "100vh",
-        backgroundColor: "#EBF2F8",
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
+    <Box className={classes.root}>
       {props.responseHistory ? (
         <Grid container spacing={2}>
           <Grid item xs={3}>
-            <Box
-              style={{
-                backgroundColor: "white",
-                boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-                padding: "10px",
-              }}
-            >
-              <Typography
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  fontSize: "18px",
-                }}
-              >
-                Test Name: {props.responseHistory[0].testName}
+            <Box className={classes.box}>
+              <Typography className={classes.typo}>
+                <span>Test Name:</span> {props.responseHistory[0].testName}
               </Typography>
 
-              <Typography
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  fontSize: "18px",
-                }}
-              >
-                Date:{" "}
+              <Typography className={classes.typo}>
+                <span>Date:</span>{" "}
                 {moment(props.responseHistory[0].finishTime).format(
                   "YYYY-MM-DD"
                 )}
               </Typography>
-              <Typography
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  fontSize: "18px",
-                }}
-              >
-                Passing Marks: {props.responseHistory[0].passingMarks}
+              <Typography className={classes.typo}>
+                <span>Passing Marks:</span>{" "}
+                {props.responseHistory[0].passingMarks}
               </Typography>
-              <Typography
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  fontSize: "18px",
-                }}
-              >
-                Total Marks: {props.responseHistory[0].totalMarks}
+              <Typography className={classes.typo}>
+                <span>Total Marks:</span> {props.responseHistory[0].totalMarks}
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={9}>
-            <Box style={{ height: "500px", overflow: "auto" }}>
+            <Box className={classes.table}>
               <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
                 <Table stickyHeader>
                   <TableHead>

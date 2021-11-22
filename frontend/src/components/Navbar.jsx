@@ -1,12 +1,14 @@
-import { Drawer, Typography, Box, Avatar, Button } from "@mui/material";
-import { textAlign } from "@mui/system";
+import { Drawer, Typography, Box, Avatar, Button, Grid } from "@mui/material";
 import React, { useState } from "react";
-
+import toast from "react-simple-toasts";
+import { navbarStyle } from "../styles/CommonStyle";
 function Navbar(props) {
+  const classes = navbarStyle();
   const [open, setOpen] = useState(false);
   const userDetails = props.userDetails;
   const handleLogout = () => {
     localStorage.removeItem("OEC_token");
+    toast("Logged out successfully");
     props.setLayout("home");
   };
   const toggleDrawer = (open) => (event) => {
@@ -19,15 +21,7 @@ function Navbar(props) {
     setOpen(open);
   };
 
-  const handleBox1 = () => {
-    if (userDetails.role === "Student") {
-      props.setCurrPage("examList");
-    } else {
-      props.setCurrPage("createQuestion");
-    }
-  };
-
-  const handleBox2 = () => {
+  const handleBox = () => {
     if (userDetails.role === "Student") {
       props.setCurrPage("resultHistory");
     } else {
@@ -35,54 +29,69 @@ function Navbar(props) {
     }
   };
 
+  const gotoUpdate = () => {
+    setOpen(false);
+    props.setCurrPage("editProfile");
+  };
+
   return (
     <>
-      <Box
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "10px",
-          backgroundColor: "#3399ff",
-          color: "white",
-          cursor: "pointer",
-        }}
-      >
-        <Box style={{ fontSize: "28px", fontWeight: "bold" }}>
-          Online Exam Conductor
-        </Box>
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-around",
-            width: "30%",
-          }}
-        >
-          <Box onClick={() => props.setLayout("register")}>Register</Box>
-          <Box onClick={() => props.setCurrPage("examList")}>Exam List</Box>
-          <Box onClick={handleBox1}>
-            {userDetails.role === "Student" ? "Exam List" : "Create Question"}
-          </Box>
-          <Box onClick={handleBox2}>
-            {userDetails.role === "Student" ? "My Grades" : "Create Exam"}
-          </Box>
-          <Box onClick={toggleDrawer(true)}>Profile</Box>
-        </Box>
+      <Box className={classes.root}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
+            <Box className={classes.navHead}>Online Exam Conductor</Box>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={12}
+            md={1}
+            lg={1}
+            xl={1}
+            className={classes.navItem}
+          >
+            <Box onClick={() => props.setLayout("register")}>Register</Box>
+          </Grid>
+          <Grid
+            className={classes.navItem}
+            item
+            xs={12}
+            sm={12}
+            md={1}
+            lg={1}
+            xl={1}
+          >
+            <Box onClick={() => props.setCurrPage("examList")}>Exam List</Box>
+          </Grid>
+          <Grid
+            className={classes.navItem}
+            item
+            xs={12}
+            sm={12}
+            md={1}
+            lg={1}
+            xl={1}
+          >
+            <Box onClick={handleBox}>
+              {userDetails.role === "Student" ? "My Grades" : "Create Exam"}
+            </Box>
+          </Grid>
+          <Grid
+            className={classes.navItem}
+            item
+            xs={12}
+            sm={12}
+            md={1}
+            lg={1}
+            xl={1}
+          >
+            <Box onClick={toggleDrawer(true)}>Profile</Box>
+          </Grid>
+        </Grid>
       </Box>
       <Drawer anchor="right" open={open} onClose={toggleDrawer(false)}>
-        <Box
-          style={{
-            width: "350px",
-            display: "flex",
-            justifyContent: "center",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            variant="h4"
-            style={{ marginTop: "10px", marginBottom: "20px" }}
-          >
+        <Box className={classes.headBox}>
+          <Typography variant="h4" className={classes.head}>
             My Profile
           </Typography>
           <Avatar
@@ -94,64 +103,63 @@ function Navbar(props) {
               fontSize: "42px",
             }}
           >
-            A
+            {userDetails.name[0]}
           </Avatar>
-          <Box style={{ padding: "5px", textAlign: "center" }}>
-            Name : {userDetails.name}
-          </Box>
-          <Box style={{ padding: "5px", textAlign: "center" }}>
-            Email : {userDetails.email}
-          </Box>
-          <Box style={{ padding: "5px", textAlign: "center" }}>
-            Role : {userDetails.role}
-          </Box>
-          <Box style={{ padding: "5px", textAlign: "center" }}>
-            Address : {userDetails.address}
-          </Box>
-          <Box style={{ padding: "5px", textAlign: "center" }}>
-            Institute : {userDetails.institute}
-          </Box>
-          <Box style={{ padding: "5px", textAlign: "center" }}>
-            Contact : {userDetails.contact}
-          </Box>
-          {userDetails.role === "Student" ? (
-            <>
-              {" "}
-              <Box style={{ padding: "5px", textAlign: "center" }}>
-                Class : {userDetails.class}
-              </Box>
-              <Box style={{ padding: "5px", textAlign: "center" }}>
-                Rollno : {userDetails.rollNo}
-              </Box>{" "}
-            </>
-          ) : (
-            <Box style={{ padding: "5px", textAlign: "center" }}>
-              Expertise : {userDetails.expertise}
+          <Box className={classes.outerBox}>
+            <Box className={classes.typo}>
+              <span>Name: </span> {userDetails.name}
             </Box>
-          )}
-
-          <Box
-            style={{
-              width: "55%",
-              paddingTop: "10px",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              style={{ marginRight: "10px" }}
-              variant="outlined"
-              color="secondary"
-              onClick={() => {
-                props.setCurrPage("editProfile");
-              }}
-            >
-              Update
-            </Button>
-            <Button variant="contained" color="primary" onClick={handleLogout}>
-              Logout
-            </Button>
+            <Box className={classes.typo}>
+              <span>Email: </span> {userDetails.email}
+            </Box>
+            <Box className={classes.typo}>Role : {userDetails.role}</Box>
+            <Box className={classes.typo}>
+              <span>Address: </span> {userDetails.address}
+            </Box>
+            <Box className={classes.typo}>
+              <span>Institute: </span> {userDetails.institute}
+            </Box>
+            <Box className={classes.typo}>
+              <span>Contact: </span> {userDetails.contact}
+            </Box>
+            {userDetails.role === "Student" ? (
+              <>
+                <Box className={classes.typo}>
+                  <span>Class: </span> {userDetails.class}
+                </Box>
+                <Box className={classes.typo}>
+                  <span>Rollno: </span> {userDetails.rollNo}
+                </Box>
+              </>
+            ) : (
+              <Box className={classes.typo}>
+                <span>Expertise: </span> {userDetails.expertise}
+              </Box>
+            )}
+          </Box>
+          <Box className={classes.btnGrp}>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  fullWidth
+                  onClick={gotoUpdate}
+                >
+                  Update
+                </Button>
+              </Grid>
+              <Grid item xs={6}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="primary"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
+              </Grid>
+            </Grid>
           </Box>
         </Box>
       </Drawer>
