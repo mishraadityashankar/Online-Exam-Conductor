@@ -62,7 +62,6 @@ function ExamWindow(props) {
               ])
             );
           }
-
           setErrMsg(res.data.result.questions.map((ele) => ["", "", "", ""]));
           console.log(res.data);
         } else {
@@ -74,7 +73,7 @@ function ExamWindow(props) {
         toast(err.message);
         props.setLayout("main");
       });
-  }, []);
+  }, [selectedTest._id]);
 
   useEffect(() => {
     if (count > selectedTest.activityThreshold) {

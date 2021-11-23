@@ -3,13 +3,7 @@ import { Box, Grid, Button, TextField } from "@mui/material";
 import toast from "react-simple-toasts";
 import axios from "axios";
 import { homeStyle } from "../styles/CommonStyle";
-
-function validateEmail(email) {
-  const re =
-    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(email);
-}
-
+import { validateEmail } from "../helpers/validations";
 function Home(props) {
   const classes = homeStyle();
 

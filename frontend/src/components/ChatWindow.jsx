@@ -24,7 +24,7 @@ function ChatWindow(props) {
     setSocket(socket);
 
     return () => socket.close();
-  }, []);
+  }, [props.userDetails, props.testId]);
 
   const handleSend = () => {
     console.log(input);
