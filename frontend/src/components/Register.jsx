@@ -16,6 +16,11 @@ import ClearIcon from "@mui/icons-material/Clear";
 import axios from "axios";
 import toast from "react-simple-toasts";
 import { registerStyle } from "../styles/CommonStyle";
+import {
+  validateEmail,
+  validateExpertise,
+  validateMobile,
+} from "../helpers/validations";
 
 const intialState = {
   email: "",
@@ -30,20 +35,6 @@ const intialState = {
   expertise: "",
 };
 
-function validateEmail(email) {
-  const re =
-    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(email);
-}
-function validateMobile(phone) {
-  const re = /^\d{10}$/;
-  return re.test(phone);
-}
-
-function validateExpertise(subjects) {
-  const re = /^[a-zA-Z0-9\x20]*$/;
-  return re.test(subjects);
-}
 function Register(props) {
   const classes = registerStyle();
   const [user, setUser] = useState(intialState);
@@ -216,7 +207,7 @@ function Register(props) {
               />
             </Box>
           )}
-          <Typography className={classes.err}>{errMsg}</Typography>
+          <Box className={classes.err}>{errMsg}</Box>
           <Grid container spacing={2} className={classes.formElement}>
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
               <Box>

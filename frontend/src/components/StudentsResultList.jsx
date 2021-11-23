@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 
 import moment from "moment";
-import { studentResultStyles } from "../styles/StudentStyle";
+import { studentResultStyles } from "../styles/ResponseStyle";
 
 function StudentsResultList(props) {
   const classes = studentResultStyles();

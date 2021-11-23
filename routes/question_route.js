@@ -12,12 +12,14 @@ router.get("/get", checkauth, (req, res) => {
     console.log(subject);
     conditions = { ...conditions, subject };
   }
-  console.log({ ...conditions });
   Questions.find({ ...conditions }, (err, totalQuestions) => {
     if (err) {
       console.log("error");
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "Success", result: totalQuestions });
+      return res
+        .status(200)
+        .json({ message: "Success", result: totalQuestions });
     }
   });
 });
@@ -28,8 +30,11 @@ router.post("/add", checkauth, (req, res) => {
   Questions.create(req.body, (err, newlyCreatedQuestion) => {
     if (err) {
       console.log(err);
+      return res.status(404).send(err);
     } else {
-      res.status(201).json({ message: "Added", result: newlyCreatedQuestion });
+      return res
+        .status(201)
+        .json({ message: "Added", result: newlyCreatedQuestion });
     }
   });
 });
@@ -39,18 +44,22 @@ router.get("/details/:id", checkauth, (req, res) => {
   Questions.findById(req.params.id, (err, foundQuestion) => {
     if (err) {
       console.log(err);
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "Success", result: foundQuestion });
+      return res
+        .status(200)
+        .json({ message: "Success", result: foundQuestion });
     }
   });
 });
-
+//update route
 router.post("/update/:id", checkauth, (req, res) => {
   Questions.findByIdAndUpdate(req.params.id, req.body, (err) => {
     if (err) {
       console.log(err);
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "Updated" });
+      return res.status(200).json({ message: "Updated" });
     }
   });
 });
@@ -59,8 +68,11 @@ router.delete("/delete/:id", checkauth, (req, res) => {
   Questions.findByIdAndRemove(req.params.id, (err, deletedQuestion) => {
     if (err) {
       console.log("err is " + err);
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "Deleted", result: deletedQuestion });
+      return res
+        .status(200)
+        .json({ message: "Deleted", result: deletedQuestion });
     }
   });
 });

@@ -14,7 +14,7 @@ import {
 import axios from "axios";
 import moment from "moment";
 import toast from "react-simple-toasts";
-import { responseListStyles } from "../styles/StudentStyle";
+import { responseListStyles } from "../styles/ResponseStyle";
 
 function ResponsesList(props) {
   const classes = responseListStyles();

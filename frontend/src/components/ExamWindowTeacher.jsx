@@ -39,11 +39,17 @@ function ExamWindowTeacher(props) {
   };
   useEffect(() => {
     axios
-      .get("/test/details/" + props.selectedTest._id, {
-        headers: {
-          Authorization: "Bearer " + props.token,
-        },
-      })
+      .get(
+        "/test/fullDetails/" +
+          props.selectedTest._id +
+          "/" +
+          props.userDetails._id,
+        {
+          headers: {
+            Authorization: "Bearer " + props.token,
+          },
+        }
+      )
       .then((res) => {
         if (res.data.message === "Success") {
           setTestDetails(res.data.result);

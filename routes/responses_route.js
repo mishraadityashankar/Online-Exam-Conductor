@@ -114,8 +114,8 @@ router.post("/saveResult", checkAuth, (req, res) => {
     .exec((err, detailedResponses) => {
       if (err) {
         console.log(err);
+        return res.status(404).send(err);
       } else {
-        console.log(detailedResponses);
         let scoresObtained = 0;
         let recordedAnswers = req.body.answers;
         detailedResponses.questions.map((singleQuestion, ind) => {
@@ -154,8 +154,11 @@ router.delete("/delete/:id", (req, res) => {
   Responses.findByIdAndRemove(req.params.id, (err, deletedQuestion) => {
     if (err) {
       console.log("err is " + err);
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "deleted", result: deletedQuestion });
+      return res
+        .status(200)
+        .json({ message: "deleted", result: deletedQuestion });
     }
   });
 });

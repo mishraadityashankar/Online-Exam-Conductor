@@ -7,7 +7,8 @@ import {
   FormLabel,
   MenuItem,
 } from "@mui/material";
-import { commonStyles, createExamStyles } from "../styles/CommonStyle";
+import { commonStyles } from "../styles/CommonStyle";
+import { createExamStyles } from "../styles/ExamStyle";
 
 function CreateQuestion(props) {
   const classes = commonStyles();

@@ -4,8 +4,9 @@ export const commonStyles = makeStyles({
     backgroundColor: "#f5f0e1",
     display: "flex",
     justifyContent: "space-between",
-    height: "90vh",
+    height: "100vh",
     padding: "20px",
+    overflow: "auto",
   },
   card: {
     width: "45%",
@@ -19,155 +20,49 @@ export const commonStyles = makeStyles({
     padding: "10px",
   },
   btn: {
-    marginleft: "10px",
-    marginTop: "10px",
-    marginRight: "10px",
+    marginleft: "10px !important",
+    marginTop: "10px !important",
+    marginRight: "10px !important",
   },
   paragraph: {
-    padding: "5px",
+    padding: "5px !important",
     "& span": {
-      color: "black",
-      fontSize: "18px",
-      fontWeight: "bold",
+      color: "black !important",
+      fontSize: "18px !important",
+      fontWeight: "bold !important",
     },
   },
   headingLeft: {
-    fontSize: "28px",
-    fontWeight: "bold",
+    fontSize: "28px !important",
+    fontWeight: "bold !important",
     textAlign: "left",
-    marginLeft: "5px",
-    marginRight: "5px",
-    marginBottom: "10px",
+    marginLeft: "5px !important",
+    marginRight: "5px !important",
+    marginBottom: "10px !important",
   },
   subHeadingCenter: {
-    fontSize: "24px",
-    fontWeight: "bold",
+    fontSize: "24px !important",
+    fontWeight: "bold !important",
     textAlign: "center",
-    margin: "5px",
+    margin: "5px !important",
   },
   normalParaRight: {
-    fontSize: "18px",
-    textAlign: "right",
-    margin: "5px",
+    fontSize: "18px !important",
+    textAlign: "right !important",
+    margin: "5px !important",
   },
   err: {
-    padding: "2px",
-    textAlign: "center",
-    color: "red",
+    padding: "2px !important",
+    textAlign: "center !important",
+    color: "red !important",
   },
-});
-
-export const createExamStyles = makeStyles({
-  root: {
-    backgroundColor: "#f5f0e1",
-    height: "100vh",
-    padding: "20px",
-    overflow: "auto",
-  },
-  gridOuter: {
-    backgroundColor: "white",
-    padding: "20px",
-    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-  },
-  gridOuter2: {
-    backgroundColor: "#ffc13b",
-    padding: "20px",
-    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-  },
-  questionList: {
-    height: "400px",
-    overflow: "auto",
-    padding: "10px",
-  },
-
-  paragraph: {
-    padding: "5px",
-    "& span": {
-      color: "black",
-      fontSize: "18px",
-      fontWeight: "bold",
-    },
-  },
-  flexBox1: {
+  loading: {
     display: "flex",
-    flexDirection: "column",
-    width: "40%",
-  },
-  flexBox2: {
-    display: "flex",
-    flexDirection: "column",
-    width: "48%",
-    justifyContent: "space-around",
-  },
-});
-
-export const examWindowStyles = makeStyles({
-  root: {
-    padding: "20px",
-    textAlign: "left",
-    backgroundColor: "#f5f0e1",
-  },
-  questionGrid: {
-    height: "100vh",
-    overflow: "auto",
-  },
-  questionBox: {
-    margin: "10px",
-    boxShadow: "0 4px 4px 0 rgb(0 0 0 / 20%)",
-  },
-  summary: {
-    backgroundColor: "#F8F8F8",
-  },
-  typo1: {
-    padding: "5px",
-    fontWeight: "bold",
-    fontSize: "18px",
-  },
-
-  typo2: {
-    textAlign: "right",
-    padding: "5px",
-    fontWeight: "bold",
-  },
-  typo3: {
-    padding: "10px",
-  },
-  flexBox1: {
-    display: "flex",
-    justifyContent: "space-between",
-  },
-  err: {
-    color: "red",
-  },
-  examDetailsBox: {
-    marginBottom: "20px",
-    backgroundColor: "white",
-    padding: "20px",
-    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-  },
-  headBox: {
-    marginBottom: "20px",
-  },
-  testName: {
+    justifyContent: "center",
+    alignItems: "center",
     fontSize: "24px",
     fontWeight: "bold",
-  },
-  totalMarks: {
-    fontSize: "16px",
-    fontWeight: "bold",
-    marginBottom: "20px",
-  },
-  subject: {
-    fontSize: "16px",
-    fontWeight: "bold",
-    marginBottom: "20px",
-  },
-  err2: {
-    color: "red",
-    marginTop: "20px",
-  },
-  buttonGrid: {
-    marginTop: "20px",
+    height: "60vh",
   },
 });
 
@@ -187,11 +82,11 @@ export const chatWindowStyles = makeStyles({
     backgroundColor: "#F5F5F5",
   },
   typo1: {
-    fontSize: "16px",
-    fontWeight: "bold",
+    fontSize: "16px !important",
+    fontWeight: "bold !important",
   },
   typo2: {
-    fontSize: "16px",
+    fontSize: "16px !important",
   },
 });
 
@@ -231,7 +126,7 @@ export const homeStyle = makeStyles({
     marginBottom: "10px",
   },
   typo: {
-    padding: "10px",
+    padding: "20px",
     textAlign: "center",
   },
   link: {
@@ -275,6 +170,8 @@ export const registerStyle = makeStyles({
   },
   err: {
     color: "red",
+    textAlign: "center",
+    margin: "5px",
   },
   box: {
     marginTop: "40px",
@@ -335,21 +232,21 @@ export const editProfileStyle = makeStyles({
   },
   card: {
     padding: "20px",
-    height: "60%",
+    height: "65%",
     overflow: "auto",
     backgroundColor: "white",
     boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
   },
   formElement: {
-    padding: "10px",
+    padding: "10px !important",
   },
   head1: {
-    fontSize: "32px",
-    fontWeight: "bold",
-    marginBottom: "20px",
+    fontSize: "32px !important",
+    fontWeight: "bold !important",
+    marginBottom: "20px !important",
   },
   typo1: {
-    fontSize: "18px",
-    padding: "5px",
+    fontSize: "18px !important",
+    padding: "5px !important",
   },
 });

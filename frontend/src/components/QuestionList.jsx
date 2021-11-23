@@ -95,7 +95,6 @@ function QuestionList(props) {
                       <Button
                         className={classes.btn}
                         variant="contained"
-                        color="success"
                         onClick={() => props.deleteQuestion(ind)}
                       >
                         Remove

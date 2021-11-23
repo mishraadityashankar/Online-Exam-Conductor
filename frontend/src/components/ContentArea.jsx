@@ -12,9 +12,12 @@ import ResultHistory from "./ResultHistory";
 import toast from "react-simple-toasts";
 import StudentsResultList from "./StudentsResultList";
 import ExamWindowTeacher from "./ExamWindowTeacher";
+import { commonStyles } from "../styles/CommonStyle";
+
 function ContentArea(props) {
+  const classes = commonStyles();
   const [userDetails, setUserDetails] = useState(null);
-  const [currPage, setCurrPage] = useState("createExam");
+  const [currPage, setCurrPage] = useState("examList");
   const [curResponses, setCurResponses] = useState(null);
   const [responseHistory, setResponseHistory] = useState(null);
   const [editTestDetails, setEditTestDetails] = useState(null);
@@ -176,7 +179,7 @@ function ContentArea(props) {
           {renderPage()}
         </div>
       );
-    } else return <div>Loading</div>;
+    } else return <div className={classes.loading}>Loading</div>;
   };
   return <>{content()}</>;
 }

@@ -14,7 +14,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axios from "axios";
 import ChatWindow from "./ChatWindow";
 import toast from "react-simple-toasts";
-import { examWindowStyles } from "../styles/CommonStyle";
+import { examWindowStyles } from "../styles/ExamStyle";
 
 function ExamWindow(props) {
   const classes2 = examWindowStyles();
@@ -71,14 +71,14 @@ function ExamWindow(props) {
       })
       .catch((err) => {
         console.log(err);
-        props.setLayout("home");
+        toast(err.message);
+        props.setLayout("main");
       });
   }, []);
 
   useEffect(() => {
     if (count > selectedTest.activityThreshold) {
-      toast(selectedTest);
-      toast("Test is ended because of Tab switches");
+      toast("Test is ended because of Tab switches", 4000);
       handleSubmit();
     }
   }, [count]);
@@ -146,12 +146,11 @@ function ExamWindow(props) {
         }
       )
       .then((res) => {
-        toast(res.data.message);
+        toast(res.data.message, 4000);
       })
-      .then(() => document.exitFullscreen())
       .catch((err) => {
         console.log(err);
-        toast(err.message);
+        toast(err.message, 4000);
       })
       .finally(() => props.setLayout("main"));
   };
@@ -264,21 +263,24 @@ function ExamWindow(props) {
               <Box className={classes2.examDetailsBox}>
                 <Box className={classes2.headBox}>
                   <Typography className={classes2.testName}>
-                    {selectedTest.testName}
+                    {"Test Name | " + selectedTest.testName}
                   </Typography>
                 </Box>
                 <Box className={classes2.flexBox1}>
-                  <Typography className={classes2.totalMarks}>
+                  <Typography className={classes2.typo4}>
                     Total Marks: {selectedTest.totalMarks}
                   </Typography>
-                  <Typography className={classes2.subject}>
-                    Subject: {selectedTest.subject}
+                  <Typography className={classes2.typo4}>
+                    Passing Marks: {selectedTest.passingMarks}
                   </Typography>
                 </Box>
-                <Box>
-                  <Typography>
+                <Box className={classes2.flexBox1}>
+                  <Typography className={classes2.typo4}>
                     Ends in: <span>{days}</span>:<span>{hours}</span>:
                     <span>{minutes}</span>:<span>{seconds}</span>
+                  </Typography>
+                  <Typography className={classes2.typo4}>
+                    Subject: {selectedTest.subject}
                   </Typography>
                 </Box>
                 {!document.fullscreenElement && (

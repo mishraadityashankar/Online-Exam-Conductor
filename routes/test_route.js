@@ -9,8 +9,9 @@ router.get("/get", checkAuth, (req, res) => {
   Tests.find({ endTime: { $gte: dateNow } }, (err, totalTests) => {
     if (err) {
       console.log("error");
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "Success", result: totalTests });
+      return res.status(200).json({ message: "Success", result: totalTests });
     }
   });
 });
@@ -21,6 +22,7 @@ router.get("/getByUser", checkAuth, (req, res) => {
     .exec((err, totalTests) => {
       if (err) {
         console.log("error");
+        return res.status(404).send(err);
       } else {
         const expiredTests = totalTests.filter(
           (ele) => new Date(ele.endTime) <= new Date()
@@ -59,7 +61,26 @@ router.get("/details/:id", checkAuth, (req, res) => {
         console.log(err);
         return res.status(404).send(err);
       } else {
-        return res.status(200).json({ message: "Success", result: foundTest });
+        const filteredQuestion = foundTest.questions.map((ele) => {
+          const newEle = {
+            _id: ele._id,
+            questionName: ele.questionName,
+            problemStatement: ele.problemStatement,
+            option_A: ele.option_A,
+            option_B: ele.option_B,
+            option_C: ele.option_C,
+            option_D: ele.option_D,
+            subject: ele.subject,
+            createdBy: ele.createdBy,
+            difficulty: ele.difficulty,
+            marks: ele.marks,
+          };
+          return newEle;
+        });
+        return res.status(200).json({
+          message: "Success",
+          result: { ...foundTest.toJSON(), questions: filteredQuestion },
+        });
       }
     });
 });

@@ -56,20 +56,20 @@ export const resultHistoryStyles = makeStyles({
     boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
   },
   head: {
-    fontSize: "26px",
-    fontWeight: "bold",
-    marginBottom: "10px",
+    fontSize: "26px !important",
+    fontWeight: "bold !important",
+    marginBottom: "10px !important",
   },
   flexBox: {
     display: "flex",
     justifyContent: "space-between",
   },
   formElement: {
-    margin: "2px",
-    padding: "5px",
+    margin: "2px !important",
+    padding: "5px !important",
 
     "& span": {
-      fontWeight: "bold",
+      fontWeight: "bold !important",
     },
   },
   flexBox2: {

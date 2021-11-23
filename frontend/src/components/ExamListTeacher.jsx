@@ -155,12 +155,9 @@ function ExamList(props) {
     return (
       <Box className={classes.notest}>
         <Box>
-          <Typography className={classes.notestTypo}>
-            {" "}
-            No {checked ? "expired " : "remaining "}test found
-          </Typography>
+          <Box>No {checked ? "expired " : "remaining "}test found</Box>
           <Button
-            fullWidth
+            style={{ marginTop: "20px" }}
             variant="outlined"
             onClick={() => props.setCurrPage("createExam")}
           >
@@ -183,15 +180,15 @@ function ExamList(props) {
               label="Expired Test"
             />
           </Box>
+          {displayTest.length === 0 && noTest()}
           <Grid container spacing={2}>
-            {displayTest.length === 0 && noTest()}
             {displayTest.map((ele, ind) => (
               <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
                 <Box className={classes.box}>
                   <Grid container spacing={2} className={classes.typo}>
                     <Grid item xs={9}>
                       <Typography className={classes.heading1}>
-                        Test Name : {ele.testName}
+                        <span>Test Name: </span> {ele.testName}
                       </Typography>
                     </Grid>
                     <Grid item xs={3}>
@@ -218,11 +215,15 @@ function ExamList(props) {
 
                   <Grid container spacing={2} className={classes.typo}>
                     <Grid item xs={6}>
-                      <Typography>Subject: {ele.subject}</Typography>
+                      <Typography>
+                        <span>Subject: </span>
+                        {ele.subject}
+                      </Typography>
                     </Grid>
                     <Grid item xs={6}>
                       <Typography>
-                        Duration: {getDuration(ele.startTime, ele.endTime)}
+                        <span>Duration: </span>
+                        {getDuration(ele.startTime, ele.endTime)}
                       </Typography>
                     </Grid>
                   </Grid>
@@ -230,18 +231,19 @@ function ExamList(props) {
                   <Grid container spacing={2} className={classes.typo}>
                     <Grid item xs={6}>
                       <Typography>
-                        Start Date: {moment(ele.startTime).format("YYYY-MM-DD")}
+                        <span>Date: </span>
+                        {moment(ele.startTime).format("YYYY-MM-DD")}
                       </Typography>
                     </Grid>
                     <Grid item xs={6}>
                       <Typography>
-                        Start Time: {moment(ele.startTime).format("HH:mm")}
+                        <span>Time: </span>
+                        {moment(ele.startTime).format("HH:mm")}
                       </Typography>
                     </Grid>
                   </Grid>
                   {checked ? (
                     <Button
-                      fullWidth
                       variant="contained"
                       color="primary"
                       onClick={() => getResults(ele._id)}
@@ -250,7 +252,6 @@ function ExamList(props) {
                     </Button>
                   ) : (
                     <Button
-                      fullWidth
                       variant="contained"
                       color="primary"
                       onClick={() => handleEnter(ele)}

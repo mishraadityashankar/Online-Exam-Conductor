@@ -3,10 +3,16 @@ import { Box, Avatar, Button, TextField, Grid } from "@mui/material";
 import axios from "axios";
 import toast from "react-simple-toasts";
 import { editProfileStyle } from "../styles/CommonStyle";
+import {
+  validateEmail,
+  validateExpertise,
+  validateMobile,
+} from "../helpers/validations";
 
 function EditProfile(props) {
   const classes = editProfileStyle();
   const userDetails = props.userDetails;
+  const [errMsg, setErrMsg] = useState("");
   const intialState = {
     ...userDetails,
   };
@@ -17,19 +23,32 @@ function EditProfile(props) {
   };
 
   const handleUpdate = (e) => {
-    axios
-      .post("/user/update", user, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("OEC_token"),
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        toast(res.data.message);
-        props.setUserDetails(user);
-        props.setCurrPage("createExam");
-      })
-      .catch((err) => console.log(err));
+    if (!validateEmail(user.email)) setErrMsg("Email is not valid");
+    else if (!validateMobile(user.contact))
+      setErrMsg("Contact number should have 10 digits");
+    else if (!validateExpertise(user.expertise))
+      setErrMsg("Expertise Subjects should be separated by single space");
+    else if (user.password === "" || user.name === "" || user.address === "")
+      setErrMsg("A required field cannot be empty");
+    else {
+      axios
+        .post("/user/update", user, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("OEC_token"),
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          toast(res.data.message);
+          props.setUserDetails(user);
+          setErrMsg("");
+          props.setCurrPage("examList");
+        })
+        .catch((err) => {
+          console.log(err);
+          toast(err.message);
+        });
+    }
   };
 
   return (
@@ -53,28 +72,7 @@ function EditProfile(props) {
                 </Avatar>
                 <Box className={classes.typo1}>Email : {userDetails.email}</Box>
                 <Box className={classes.typo1}>Role : {userDetails.role}</Box>
-                <Grid container spacing={2} className={classes.formElement}>
-                  <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                    <Button
-                      fullWidth
-                      onClick={() => props.setCurrPage("createExam")}
-                      variant="outlined"
-                      color="success"
-                    >
-                      Cancel
-                    </Button>
-                  </Grid>
-                  <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                    <Button
-                      fullWidth
-                      onClick={handleUpdate}
-                      variant="contained"
-                      color="success"
-                    >
-                      Update
-                    </Button>
-                  </Grid>
-                </Grid>
+                <Box style={{ color: "red" }}>{errMsg}</Box>
               </Box>
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
@@ -83,6 +81,7 @@ function EditProfile(props) {
                   <TextField
                     label="Name"
                     fullWidth
+                    required
                     size="small"
                     name="name"
                     value={user.name}
@@ -93,6 +92,7 @@ function EditProfile(props) {
                   <TextField
                     label="Contact"
                     fullWidth
+                    required
                     size="small"
                     name="contact"
                     value={user.contact}
@@ -108,6 +108,7 @@ function EditProfile(props) {
                         type="Name"
                         size="small"
                         name="class"
+                        required
                         value={user.class}
                         onChange={handleChange}
                       />
@@ -117,6 +118,7 @@ function EditProfile(props) {
                         label="Roll No"
                         fullWidth
                         type="Name"
+                        required
                         size="small"
                         name="rollNo"
                         value={user.rollNo}
@@ -130,6 +132,7 @@ function EditProfile(props) {
                     <TextField
                       label="Expertise"
                       fullWidth
+                      required
                       size="small"
                       name="expertise"
                       value={user.expertise}
@@ -143,6 +146,7 @@ function EditProfile(props) {
                   label="Institute"
                   fullWidth
                   size="small"
+                  required
                   name="institute"
                   value={user.institute}
                   onChange={handleChange}
@@ -152,12 +156,29 @@ function EditProfile(props) {
                 <TextField
                   label="Address"
                   fullWidth
+                  required
                   size="small"
                   name="address"
                   value={user.address}
                   onChange={handleChange}
                 />
               </Box>
+            </Grid>
+            <Grid container spacing={2} className={classes.formElement}>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <Button
+                  fullWidth
+                  onClick={() => props.setCurrPage("examList")}
+                  variant="outlined"
+                >
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <Button fullWidth onClick={handleUpdate} variant="contained">
+                  Update
+                </Button>
+              </Grid>
             </Grid>
           </Grid>
         </Box>

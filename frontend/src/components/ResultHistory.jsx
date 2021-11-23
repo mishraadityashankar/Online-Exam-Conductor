@@ -3,7 +3,7 @@ import { VictoryPie } from "victory-pie";
 import moment from "moment";
 import { Box, Button, Grid, Typography } from "@mui/material";
 import QuestionList from "./QuestionList";
-import { resultHistoryStyles } from "../styles/StudentStyle";
+import { resultHistoryStyles } from "../styles/ResponseStyle";
 
 function ResultHistory(props) {
   const classes = resultHistoryStyles();
@@ -40,6 +40,10 @@ function ResultHistory(props) {
                     </Typography>
                     <Typography className={classes.formElement}>
                       <span>Total Marks: </span> {selectedResponses.totalMarks}
+                    </Typography>
+                    <Typography className={classes.formElement}>
+                      <span>Passing Obtained: </span>{" "}
+                      {selectedResponses.passingMarks}
                     </Typography>
                     <Typography className={classes.formElement}>
                       <span>Marks Obtained: </span>{" "}

@@ -42,52 +42,58 @@ function ExamList(props) {
   };
   return (
     <Box className={classes.root}>
-      <Grid container spacing={2}>
-        {testList.map((ele) => (
-          <Grid item xs={12} sm={6} md={6} lg={4} xl={4}>
-            <Box>
-              <Box className={classes.box}>
-                <Typography
-                  style={{ fontSize: "18px", marginBottom: "20px" }}
-                  className={classes.heading1}
-                >
-                  Test Name : {ele.testName}
-                </Typography>
-                <Grid container spacing={2} className={classes.typo}>
-                  <Grid item xs={6}>
-                    <Typography>Subject: {ele.subject}</Typography>
+      {testList.length ? (
+        <Grid container spacing={2}>
+          {testList.map((ele) => (
+            <Grid item xs={12} sm={6} md={6} lg={4} xl={4}>
+              <Box>
+                <Box className={classes.box}>
+                  <Typography className={classes.heading1}>
+                    Test Name : {ele.testName}
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <Typography className={classes.typo}>
+                        <span>Subject: </span> {ele.subject}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography className={classes.typo}>
+                        <span>Date: </span>
+                        {moment(ele.startTime).format("YYYY-MM-DD")}
+                      </Typography>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Typography>
-                      Start Date: {moment(ele.startTime).format("YYYY-MM-DD")}
-                    </Typography>
-                  </Grid>
-                </Grid>
 
-                <Grid container spacing={2} className={classes.typo}>
-                  <Grid item xs={6}>
-                    <Typography>
-                      Start Time: {moment(ele.startTime).format("HH:mm")}
-                    </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <Typography className={classes.typo}>
+                        <span>Time: </span>
+                        {moment(ele.startTime).format("HH:mm")}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography className={classes.typo}>
+                        <span>Duration: </span>{" "}
+                        {getDuration(ele.startTime, ele.endTime)}
+                      </Typography>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6}>
-                    <Typography>
-                      Duration: {getDuration(ele.startTime, ele.endTime)}
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleEnter(ele)}
-                >
-                  Enter
-                </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleEnter(ele)}
+                  >
+                    Enter
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-          </Grid>
-        ))}
-      </Grid>
+            </Grid>
+          ))}
+        </Grid>
+      ) : (
+        <Box className={classes.notest}>No Tests Found</Box>
+      )}
     </Box>
   );
 }

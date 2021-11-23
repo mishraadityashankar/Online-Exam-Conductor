@@ -16,7 +16,8 @@ import axios from "axios";
 import moment from "moment";
 import QuestionList from "./QuestionList";
 import toast from "react-simple-toasts";
-import { commonStyles, createExamStyles } from "../styles/CommonStyle";
+import { commonStyles } from "../styles/CommonStyle";
+import { createExamStyles } from "../styles/ExamStyle";
 import CreateQuestion from "./CreateQuestion";
 
 function CreateExam(props) {
@@ -31,8 +32,6 @@ function CreateExam(props) {
     subject: isEditing ? prevTest.subject : "",
     passingMarks: isEditing ? prevTest.passingMarks : 0,
     totalMarks: isEditing ? prevTest.totalMarks : 0,
-    studentEnrolled: [],
-    expired: isEditing ? prevTest.expired : false,
     activityThreshold: isEditing ? prevTest.activityThreshold : 3,
   };
   const initialQuestion = {

@@ -41,51 +41,31 @@ function Navbar(props) {
           <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
             <Box className={classes.navHead}>Online Exam Conductor</Box>
           </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={12}
-            md={1}
-            lg={1}
-            xl={1}
-            className={classes.navItem}
-          >
-            <Box onClick={() => props.setLayout("register")}>Register</Box>
+          <Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
+            <Box
+              className={classes.navItem}
+              onClick={() => props.setLayout("register")}
+            >
+              Register
+            </Box>
           </Grid>
-          <Grid
-            className={classes.navItem}
-            item
-            xs={12}
-            sm={12}
-            md={1}
-            lg={1}
-            xl={1}
-          >
-            <Box onClick={() => props.setCurrPage("examList")}>Exam List</Box>
+          <Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
+            <Box
+              className={classes.navItem}
+              onClick={() => props.setCurrPage("examList")}
+            >
+              Exam List
+            </Box>
           </Grid>
-          <Grid
-            className={classes.navItem}
-            item
-            xs={12}
-            sm={12}
-            md={1}
-            lg={1}
-            xl={1}
-          >
-            <Box onClick={handleBox}>
+          <Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
+            <Box className={classes.navItem} onClick={handleBox}>
               {userDetails.role === "Student" ? "My Grades" : "Create Exam"}
             </Box>
           </Grid>
-          <Grid
-            className={classes.navItem}
-            item
-            xs={12}
-            sm={12}
-            md={1}
-            lg={1}
-            xl={1}
-          >
-            <Box onClick={toggleDrawer(true)}>Profile</Box>
+          <Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
+            <Box className={classes.navItem} onClick={toggleDrawer(true)}>
+              Profile
+            </Box>
           </Grid>
         </Grid>
       </Box>
@@ -112,7 +92,9 @@ function Navbar(props) {
             <Box className={classes.typo}>
               <span>Email: </span> {userDetails.email}
             </Box>
-            <Box className={classes.typo}>Role : {userDetails.role}</Box>
+            <Box className={classes.typo}>
+              <span>Role: </span> {userDetails.role}
+            </Box>
             <Box className={classes.typo}>
               <span>Address: </span> {userDetails.address}
             </Box>
