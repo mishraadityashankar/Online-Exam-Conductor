@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-// const path = require("path");
+const path = require("path");
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
@@ -10,16 +10,13 @@ const question_route = require("./routes/question_route");
 const responses_route = require("./routes/responses_route");
 const dotenv = require("dotenv");
 
-// var cors = require("cors");
-
-// app.use(cors());
+const cors = require("cors");
 
 ////middle ware set up
 dotenv.config();
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// app.use('/public', express.static(__dirname + '/public'));
 
 ///. API's connections
 app.use("/user", user_route);
@@ -27,20 +24,12 @@ app.use("/test", test_route);
 app.use("/question", question_route);
 app.use("/responses", responses_route);
 
-///// static rendering starts here ....
-
-// app.get("/StaticPageName",function(req,res){
-//     res.sendFile(path.join(__dirname, "StaticFolder",'StaticPage.html'));
-// })
-
 ////react part
 
-// if(process.env.NODE_ENV === 'production'){
-//     app.use(express.static(path.join(__dirname,  'frontend','build')));
-//     app.get("*", (req, res) => {
-//           res.sendFile(path.join(__dirname,  'frontend','build','index.html'));
-//     });
-// }
+app.use(express.static(path.join(__dirname, "frontend", "build")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend", "build", "index.html"));
+});
 
 ///socket
 

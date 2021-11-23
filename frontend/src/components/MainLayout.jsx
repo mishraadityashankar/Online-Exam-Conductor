@@ -48,11 +48,6 @@ function MainLayout(props) {
       );
     }
   };
-  // return (
-  //   <div>
-  //     <ChatWindow></ChatWindow>
-  //   </div>
-  // );
   return <div>{renderLayout()}</div>;
 }
 

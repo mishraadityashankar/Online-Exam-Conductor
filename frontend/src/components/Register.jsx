@@ -4,45 +4,19 @@ import {
   Button,
   Card,
   CardContent,
-  FormLabel,
   Grid,
   TextField,
   MenuItem,
-  Typography,
-  IconButton,
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import ClearIcon from "@mui/icons-material/Clear";
 import axios from "axios";
 import toast from "react-simple-toasts";
+import { registerStyle } from "../styles/CommonStyle";
+import {
+  validateEmail,
+  validateExpertise,
+  validateMobile,
+} from "../helpers/validations";
 
-const useStyles = makeStyles({
-  root: {
-    display: "flex",
-    backgroundColor: "lightblue",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
-  },
-  card: {
-    width: "60%",
-    padding: "10px",
-    height: "85%",
-    overflow: "auto",
-    alignContent: "left",
-    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-  },
-  formElement: {
-    display: "flex",
-    justifyContent: "space-between",
-    padding: "10px",
-  },
-  btn: {
-    width: "50%",
-    marginTop: "20px",
-  },
-});
 const intialState = {
   email: "",
   password: "",
@@ -56,22 +30,8 @@ const intialState = {
   expertise: "",
 };
 
-function validateEmail(email) {
-  const re =
-    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(email);
-}
-function validateMobile(phone) {
-  const re = /^\d{10}$/;
-  return re.test(phone);
-}
-
-function validateExpertise(subjects) {
-  const re = /^[a-zA-Z0-9\x20]*$/;
-  return re.test(subjects);
-}
 function Register(props) {
-  const classes = useStyles();
+  const classes = registerStyle();
   const [user, setUser] = useState(intialState);
   const [errMsg, setErrMsg] = useState("");
 
@@ -90,7 +50,7 @@ function Register(props) {
     else if (!validateExpertise(user.expertise))
       setErrMsg("Expertise Subjects should be separated by single space");
     else if (user.password === "" || user.name === "" || user.address === "")
-      setErrMsg("Required field cannot be empty");
+      setErrMsg("A required field cannot be empty");
     else {
       axios
         .post("/user/register", user)
@@ -98,6 +58,7 @@ function Register(props) {
           console.log(res.data);
           toast(res.data.message);
           setUser(intialState);
+          setErrMsg("");
         })
         .catch((err) => console.log(err));
     }
@@ -106,15 +67,7 @@ function Register(props) {
     <Box className={classes.root}>
       <Card className={classes.card}>
         <CardContent>
-          <Box
-            style={{
-              fontSize: "32px",
-              fontWeight: "bold",
-              marginBottom: "20px",
-            }}
-          >
-            Register
-          </Box>
+          <Box className={classes.head}>Register</Box>
 
           <Box className={classes.formElement}>
             <Grid container spacing={2}>
@@ -243,37 +196,32 @@ function Register(props) {
                 fullWidth
                 name="expertise"
                 size="small"
+                helperText="Add space-separated assigned subjects"
                 value={user.expertise}
                 onChange={handleChange}
               />
             </Box>
           )}
-          <Typography style={{ color: "red" }}>{errMsg}</Typography>
-          <Grid container spacing={2} style={{ marginTop: "20px" }}>
+          <Box className={classes.err}>{errMsg}</Box>
+          <Grid container spacing={2} className={classes.formElement}>
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-              <Button
-                variant="contained"
-                fullWidth
-                color="success"
-                onClick={handleSubmit}
-                style={{
-                  padding: "10px",
-                }}
-              >
-                Submit
-              </Button>
+              <Box>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  color="success"
+                  onClick={handleSubmit}
+                >
+                  Register
+                </Button>
+              </Box>
             </Grid>
             <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-              <Button
-                variant="outlined"
-                fullWidth
-                style={{
-                  padding: "10px",
-                }}
-                onClick={goToHome}
-              >
-                Go to login
-              </Button>
+              <Box>
+                <Button variant="outlined" fullWidth onClick={goToHome}>
+                  Go to login
+                </Button>
+              </Box>
             </Grid>
           </Grid>
         </CardContent>

@@ -18,13 +18,7 @@ const testSchema = new Schema({
     },
   ],
   totalMarks: { type: Number, required: true },
-  studentEnrolled: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
   passingMarks: { type: Number, required: true },
-  expired: { type: Boolean, default: true },
+  activityThreshold: { type: Number, default: 3 },
 });
 module.exports = mongoose.model("Test", testSchema);

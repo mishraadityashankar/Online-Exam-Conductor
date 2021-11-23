@@ -1,76 +1,36 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  getIconButtonUtilityClass,
   Grid,
   Typography,
   Checkbox,
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  TextField,
-  Divider,
 } from "@mui/material";
 import { useTimer } from "react-timer-hook";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axios from "axios";
-import { makeStyles } from "@mui/styles";
 import ChatWindow from "./ChatWindow";
 import toast from "react-simple-toasts";
+import { examWindowStyles } from "../styles/ExamStyle";
 
-const useStyles = makeStyles({
-  root: {
-    padding: "20px",
-    textAlign: "left",
-    backgroundColor: "#EBF2F8",
-  },
-  box: {
-    padding: "20px",
-    margin: "20px",
-    backgroundColor: "white",
-    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-  },
-  card: {
-    width: "70%",
-    padding: "10px",
-    alignContent: "left",
-    boxShadow: "0 4px 8px 0 rgb(0 0 0 / 20%)",
-  },
-  formElement: {
-    margin: "10px",
-    fontSize: "14px",
-    "& span": {
-      fontSize: "18px",
-      fontWeight: "bold",
-    },
-  },
-  btn: {
-    marginTop: "10px",
-  },
-});
 function ExamWindow(props) {
-  const classes = useStyles();
+  const classes2 = examWindowStyles();
   const selectedTest = props.selectedTest;
   const [selectedTestDetails, setSelectedTestDetails] = useState(null);
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState(
+    localStorage.getItem("Answers")
+      ? JSON.parse(localStorage.getItem("Answers"))
+      : []
+  );
   const [errMsg, setErrMsg] = useState([]);
   const [count, setCount] = useState(0);
-  const [disable, setDisable] = useState(false);
   const expiryTimestamp = new Date(selectedTest.endTime);
-  const {
-    seconds,
-    minutes,
-    hours,
-    days,
-    isRunning,
-    start,
-    pause,
-    resume,
-    restart,
-  } = useTimer({
+  const { seconds, minutes, hours, days } = useTimer({
     expiryTimestamp,
-    onExpire: () => console.log("submitted"),
+    onExpire: () => handleSubmit(),
   });
 
   window.onfocus = function (ev) {
@@ -90,9 +50,18 @@ function ExamWindow(props) {
       .then((res) => {
         if (res.data.message === "Success") {
           setSelectedTestDetails(res.data.result);
-          setAnswers(
-            res.data.result.questions.map((ele) => [false, false, false, false])
-          );
+          if (localStorage.getItem("Answers")) {
+            setAnswers(JSON.parse(localStorage.getItem("Answers")));
+          } else {
+            setAnswers(
+              res.data.result.questions.map((ele) => [
+                false,
+                false,
+                false,
+                false,
+              ])
+            );
+          }
           setErrMsg(res.data.result.questions.map((ele) => ["", "", "", ""]));
           console.log(res.data);
         } else {
@@ -101,14 +70,15 @@ function ExamWindow(props) {
       })
       .catch((err) => {
         console.log(err);
-        props.setLayout("home");
+        toast(err.message);
+        props.setLayout("main");
       });
-  }, []);
+  }, [selectedTest._id]);
 
   useEffect(() => {
-    if (count > 300000) {
-      toast("Test is ended because of Tab switches");
-      props.setLayout("main");
+    if (count > selectedTest.activityThreshold) {
+      toast("Test is ended because of Tab switches", 4000);
+      handleSubmit();
     }
   }, [count]);
 
@@ -121,6 +91,7 @@ function ExamWindow(props) {
           else return ele;
         })
       );
+      toast("Saved");
     } else {
       setErrMsg(
         errMsg.map((ele, ind) => {
@@ -150,8 +121,7 @@ function ExamWindow(props) {
     document.documentElement.requestFullscreen().catch((e) => console.log(e));
   };
 
-  const handleSubmit = (id) => {
-    console.log(answers[id]);
+  const handleSubmit = () => {
     let savedAnswers = answers;
     if (localStorage.getItem("Answers")) {
       savedAnswers = JSON.parse(localStorage.getItem("Answers"));
@@ -166,6 +136,7 @@ function ExamWindow(props) {
         {
           responsesId: props.responsesId,
           answers: boolAnswerString,
+          completed: true,
         },
         {
           headers: {
@@ -174,17 +145,16 @@ function ExamWindow(props) {
         }
       )
       .then((res) => {
-        toast(res.data.message);
-
-        props.setLayout("main");
+        toast(res.data.message, 4000);
       })
       .catch((err) => {
         console.log(err);
-        toast(err.message);
-      });
+        toast(err.message, 4000);
+      })
+      .finally(() => props.setLayout("main"));
   };
   return (
-    <Box className={classes.root}>
+    <Box className={classes2.root}>
       {selectedTestDetails && answers.length ? (
         <Grid container spacing={2}>
           <Grid
@@ -194,49 +164,34 @@ function ExamWindow(props) {
             md={8}
             lg={8}
             xl={8}
-            style={{ height: "100vh", overflow: "auto" }}
+            className={classes2.questionGrid}
           >
             {selectedTestDetails.questions.map((ele, ind) => (
               <Accordion
                 disabled={!document.fullscreenElement}
-                style={{
-                  margin: "10px",
-                  boxShadow: "0 4px 4px 0 rgb(0 0 0 / 20%)",
-                }}
+                className={classes2.questionBox}
               >
                 <AccordionSummary
-                  style={{ backgroundColor: "#F8F8F8" }}
+                  className={classes2.summary}
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                 >
                   <Grid container spacing={1}>
                     <Grid item xs={10}>
-                      <Typography
-                        style={{
-                          padding: "5px",
-                          fontWeight: "bold",
-                          fontSize: "18px",
-                        }}
-                      >
+                      <Typography className={classes2.typo1}>
                         {ind + 1 + " "}. {ele.questionName}
                       </Typography>
                     </Grid>
                     <Grid item xs={2}>
-                      <Typography
-                        style={{
-                          textAlign: "right",
-                          padding: "5px",
-                          fontWeight: "bold",
-                        }}
-                      >
+                      <Typography className={classes2.typo2}>
                         Marks: {ele.marks}
                       </Typography>
                     </Grid>
                   </Grid>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <Typography style={{ padding: "10px" }}>
+                  <Typography className={classes2.typo3}>
                     {ele.problemStatement}
                   </Typography>
 
@@ -248,12 +203,10 @@ function ExamWindow(props) {
                         onChange={(e) => onChangeAnswers(e, ind, 0)}
                         name="opt_a"
                       />
-
                       <Typography variant="p">
                         <span>A: </span> {ele.option_A}
                       </Typography>
                     </Box>
-
                     <Box>
                       <Checkbox
                         disabled={!document.fullscreenElement}
@@ -265,7 +218,6 @@ function ExamWindow(props) {
                         <span>B:</span> {ele.option_B}
                       </Typography>
                     </Box>
-
                     <Box>
                       <Checkbox
                         disabled={!document.fullscreenElement}
@@ -277,7 +229,6 @@ function ExamWindow(props) {
                         <span>C:</span> {ele.option_C}
                       </Typography>
                     </Box>
-
                     <Box>
                       <Checkbox
                         disabled={!document.fullscreenElement}
@@ -290,10 +241,8 @@ function ExamWindow(props) {
                       </Typography>
                     </Box>
                   </Box>
-                  <Box
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Typography style={{ color: "red" }}>
+                  <Box className={classes2.flexBox1}>
+                    <Typography className={classes2.err}>
                       {errMsg[ind]}
                     </Typography>
                     <Button
@@ -310,68 +259,41 @@ function ExamWindow(props) {
           </Grid>
           <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
             <Box>
-              <Box
-                style={{
-                  marginBottom: "20px",
-                  backgroundColor: "white",
-                  padding: "20px",
-                }}
-              >
-                <Box
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <Typography style={{ fontSize: "24px", fontWeight: "bold" }}>
-                    {selectedTest.testName}
+              <Box className={classes2.examDetailsBox}>
+                <Box className={classes2.headBox}>
+                  <Typography className={classes2.testName}>
+                    {"Test Name | " + selectedTest.testName}
                   </Typography>
                 </Box>
-                <Box
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Typography
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      marginBottom: "20px",
-                    }}
-                  >
+                <Box className={classes2.flexBox1}>
+                  <Typography className={classes2.typo4}>
                     Total Marks: {selectedTest.totalMarks}
                   </Typography>
-                  <Typography
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    Subject: {selectedTest.subject}
+                  <Typography className={classes2.typo4}>
+                    Passing Marks: {selectedTest.passingMarks}
                   </Typography>
                 </Box>
-                <Box>
-                  <Typography>
+                <Box className={classes2.flexBox1}>
+                  <Typography className={classes2.typo4}>
                     Ends in: <span>{days}</span>:<span>{hours}</span>:
                     <span>{minutes}</span>:<span>{seconds}</span>
                   </Typography>
+                  <Typography className={classes2.typo4}>
+                    Subject: {selectedTest.subject}
+                  </Typography>
                 </Box>
                 {!document.fullscreenElement && (
-                  <Typography style={{ color: "red", marginTop: "20px" }}>
-                    Please enable full screen
+                  <Typography className={classes2.err2}>
+                    Please enable full screen by pressing the button below
                   </Typography>
                 )}
-                <Grid container spacing={2} style={{ marginTop: "20px" }}>
+                <Grid container spacing={2} className={classes2.buttonGrid}>
                   <Grid item xs={6}>
                     <Button
                       variant="outlined"
                       color="primary"
                       fullWidth
                       onClick={handleFullScreen}
-                      // onClick={() => deleteQuestion(ind)}
                     >
                       Full Screen
                     </Button>
@@ -387,7 +309,10 @@ function ExamWindow(props) {
                   </Grid>
                 </Grid>
               </Box>
-              <ChatWindow userDetails={props.username}></ChatWindow>
+              <ChatWindow
+                userDetails={props.username}
+                testId={selectedTest._id}
+              ></ChatWindow>
             </Box>
           </Grid>
         </Grid>

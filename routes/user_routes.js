@@ -1,20 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const Users = require("../models/user_schema");
-
-// const jwt= require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const checkAuth = require("../utils/checkAuth.js");
 
-// router.get("/signup",(req,res)=>
-// {
-//   res.render('signup')
-// })
 router.post("/register", (req, res) => {
   bcrypt.hash(req.body.password, 10, (hash_err, hash) => {
     if (hash_err) {
-      res.status(500).json({ error: hash_err });
+      return res.status(500).json({ error: hash_err });
     } else {
       const newUser = new Users({
         ...req.body,
@@ -23,11 +17,13 @@ router.post("/register", (req, res) => {
       Users.create(newUser, (err, newlyCreatedUser) => {
         if (err) {
           console.log(err);
-          res.status(500).json({
+          return res.status(500).json({
             error: err,
           });
         } else {
-          res.status(201).json({ message: "Added", result: newlyCreatedUser });
+          return res
+            .status(201)
+            .json({ message: "Added", result: newlyCreatedUser });
         }
       });
     }
@@ -55,9 +51,7 @@ router.post("/login", (req, res) => {
             return res.status(401).json({
               message: "Auth failed",
             });
-          }
-
-          if (result) {
+          } else if (result) {
             const token = jwt.sign(
               {
                 id: user[0]._id,
@@ -69,14 +63,13 @@ router.post("/login", (req, res) => {
                 expiresIn: "1h",
               }
             );
-
-            return res.json({ message: "success", token: token });
+            return res.status(200).json({ message: "success", token: token });
+          } else {
+            return res.status(401).json({
+              message: "failed to fetch token",
+              token: null,
+            });
           }
-
-          return res.json({
-            message: "failed",
-            token: null,
-          });
         }
       );
     }
@@ -87,8 +80,9 @@ router.get("/get", (req, res) => {
   Users.find({}, (err, totalUsers) => {
     if (err) {
       console.log("error");
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "Success", result: totalUsers });
+      return res.status(200).json({ message: "Success", result: totalUsers });
     }
   });
 });
@@ -99,8 +93,11 @@ router.post("/add", (req, res) => {
   Users.create(req.body, (err, newlyCreatedUser) => {
     if (err) {
       console.log(err);
+      return res.status(404).send(err);
     } else {
-      res.status(201).json({ message: "Added", result: newlyCreatedUser });
+      return res
+        .status(201)
+        .json({ message: "Added", result: newlyCreatedUser });
     }
   });
 });
@@ -111,8 +108,9 @@ router.get("/details/", checkAuth, (req, res) => {
   Users.find({ email: req.userData.email }, (err, foundUser) => {
     if (err) {
       console.log(err);
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "Success", result: foundUser[0] });
+      return res.status(200).json({ message: "Success", result: foundUser[0] });
     }
   });
 });
@@ -121,8 +119,9 @@ router.post("/update/", checkAuth, (req, res) => {
   Users.findByIdAndUpdate(req.userData.id, req.body, (err, updatedUser) => {
     if (err) {
       console.log(err);
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "updated", result: updatedUser });
+      return res.status(200).json({ message: "updated", result: updatedUser });
     }
   });
 });
@@ -131,8 +130,9 @@ router.delete("/delete/:id", (req, res) => {
   Users.findByIdAndRemove(req.params.id, (err, deletedUser) => {
     if (err) {
       console.log("err is " + err);
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "deleted", result: deletedUser });
+      return res.status(200).json({ message: "deleted", result: deletedUser });
     }
   });
 });

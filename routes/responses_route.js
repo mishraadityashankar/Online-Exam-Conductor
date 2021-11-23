@@ -6,20 +6,39 @@ const Questions = require("../models/question_schema");
 
 // get all
 router.get("/getByUser", checkAuth, (req, res) => {
-  Responses.find({ studentId: req.userData.id }, (err, totalResponses) => {
-    if (err) {
-      return res.status(404).json({ message: "Cannot get responses list" });
-    } else {
-      if (totalResponses.length < 1)
-        return res.status(200).json({ message: "No Responses" });
-      return res.status(200).json({
-        message: "Success",
-        result: totalResponses,
-      });
-    }
-  });
+  Responses.find({ studentId: req.userData.id })
+    .sort({ finishTime: -1 })
+    .exec((err, totalResponses) => {
+      if (err) {
+        return res.status(404).json({ message: "Cannot get responses list" });
+      } else {
+        if (totalResponses.length < 1)
+          return res.status(200).json({ message: "No Responses" });
+        return res.status(200).json({
+          message: "Success",
+          result: totalResponses,
+        });
+      }
+    });
 });
 
+router.get("/getByTestId/:testId", checkAuth, (req, res) => {
+  Responses.find({ testId: req.params.testId })
+    .populate("studentId")
+    .sort({ scoresObtained: -1, finishTime: 1 })
+    .exec((err, totalResponses) => {
+      if (err) {
+        return res.status(404).json({ message: "Cannot get responses list" });
+      } else {
+        if (totalResponses.length < 1)
+          return res.status(200).json({ message: "No Responses" });
+        return res.status(200).json({
+          message: "Success",
+          result: totalResponses,
+        });
+      }
+    });
+});
 //post route
 
 router.post("/create", checkAuth, (req, res) => {
@@ -37,15 +56,16 @@ router.post("/create", checkAuth, (req, res) => {
         if (foundStudentResponse.length) {
           return res
             .status(200)
-            .json({ message: "Found", result: foundStudentResponse[0]._id });
+            .json({ message: "Resuming", result: foundStudentResponse[0] });
         } else {
           Responses.create(req.body, (err, newlyCreatedResponse) => {
             if (err) {
               return res.status(404).json({ message: "Cannot be created" });
             } else {
-              res
-                .status(201)
-                .json({ message: "Added", result: newlyCreatedResponse._id });
+              res.status(201).json({
+                message: "Starting test",
+                result: newlyCreatedResponse,
+              });
             }
           });
         }
@@ -94,8 +114,8 @@ router.post("/saveResult", checkAuth, (req, res) => {
     .exec((err, detailedResponses) => {
       if (err) {
         console.log(err);
+        return res.status(404).send(err);
       } else {
-        console.log(detailedResponses);
         let scoresObtained = 0;
         let recordedAnswers = req.body.answers;
         detailedResponses.questions.map((singleQuestion, ind) => {
@@ -106,11 +126,12 @@ router.post("/saveResult", checkAuth, (req, res) => {
         });
         let passed =
           scoresObtained >= detailedResponses.passingMarks ? true : false;
-
+        const completed = req.body.completed;
         Responses.findByIdAndUpdate(
           req.body.responsesId,
           {
             recordedAnswers,
+            completed,
             passed,
             scoresObtained,
           },
@@ -133,8 +154,11 @@ router.delete("/delete/:id", (req, res) => {
   Responses.findByIdAndRemove(req.params.id, (err, deletedQuestion) => {
     if (err) {
       console.log("err is " + err);
+      return res.status(404).send(err);
     } else {
-      res.status(200).json({ message: "deleted", result: deletedQuestion });
+      return res
+        .status(200)
+        .json({ message: "deleted", result: deletedQuestion });
     }
   });
 });

@@ -14,8 +14,10 @@ import {
 import axios from "axios";
 import moment from "moment";
 import toast from "react-simple-toasts";
+import { responseListStyles } from "../styles/ResponseStyle";
 
 function ResponsesList(props) {
+  const classes = responseListStyles();
   const [responsesList, setResponsesList] = useState([]);
 
   useEffect(() => {
@@ -65,16 +67,8 @@ function ResponsesList(props) {
       .finally(() => props.setCurrPage("singleResponses"));
   };
   return (
-    <Box
-      style={{
-        padding: "20px",
-        height: "90vh",
-        backgroundColor: "#EBF2F8",
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      <Box style={{ height: "500px", width: "950px", overflow: "auto" }}>
+    <Box className={classes.root}>
+      <Box className={classes.table}>
         {responsesList.length ? (
           <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
             <Table stickyHeader aria-label="sticky table">
