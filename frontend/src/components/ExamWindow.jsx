@@ -15,9 +15,12 @@ import axios from "axios";
 import ChatWindow from "./ChatWindow";
 import toast from "react-simple-toasts";
 import { examWindowStyles } from "../styles/ExamStyle";
+import { commonStyles } from "../styles/CommonStyle";
 
 function ExamWindow(props) {
+  const classes1 = commonStyles();
   const classes2 = examWindowStyles();
+
   const selectedExam = props.selectedExam;
   const [selectedExamDetails, setSelectedExamDetails] = useState(null);
   const [answers, setAnswers] = useState(
@@ -316,7 +319,7 @@ function ExamWindow(props) {
           </Grid>
         </Grid>
       ) : (
-        <Box>Loading</Box>
+        <Box className={classes1.loading}>Loading</Box>
       )}
     </Box>
   );

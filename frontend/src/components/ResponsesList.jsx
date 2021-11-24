@@ -15,9 +15,11 @@ import axios from "axios";
 import moment from "moment";
 import toast from "react-simple-toasts";
 import { responseListStyles } from "../styles/ResponseStyle";
+import { commonStyles } from "../styles/CommonStyle";
 
 function ResponsesList(props) {
   const classes = responseListStyles();
+  const classes1 = commonStyles();
   const [responsesList, setResponsesList] = useState([]);
 
   useEffect(() => {
@@ -65,8 +67,8 @@ function ResponsesList(props) {
   };
   return (
     <Box className={classes.root}>
-      <Box className={classes.table}>
-        {responsesList.length ? (
+      {responsesList.length ? (
+        <Box className={classes.table}>
           <TableContainer sx={{ maxHeight: 500 }} component={Paper}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
@@ -144,10 +146,10 @@ function ResponsesList(props) {
               </TableBody>
             </Table>
           </TableContainer>
-        ) : (
-          <Box>No Responses</Box>
-        )}
-      </Box>
+        </Box>
+      ) : (
+        <Box className={classes1.loading}>No Responses</Box>
+      )}
     </Box>
   );
 }
