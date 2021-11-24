@@ -75,7 +75,7 @@ function ResultHistory(props) {
           <Box className={classes.box}>
             <Box className={classes.flexBox}>
               <Typography className={classes.head}>
-                TestName: {selectedResponses.testName}
+                Exam Name: {selectedResponses.examName}
               </Typography>
               <Button onClick={() => props.setCurrPage("resultHistory")}>
                 Back

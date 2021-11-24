@@ -1,38 +1,38 @@
 const express = require("express");
 const router = express.Router();
-const Tests = require("../models/test_schema");
+const Exams = require("../models/exam_schema");
 const checkAuth = require("../utils/checkAuth");
 
 // get all
 router.get("/get", checkAuth, (req, res) => {
   const dateNow = new Date();
-  Tests.find({ endTime: { $gte: dateNow } }, (err, totalTests) => {
+  Exams.find({ endTime: { $gte: dateNow } }, (err, totalExams) => {
     if (err) {
       console.log("error");
       return res.status(404).send(err);
     } else {
-      return res.status(200).json({ message: "Success", result: totalTests });
+      return res.status(200).json({ message: "Success", result: totalExams });
     }
   });
 });
 
 router.get("/getByUser", checkAuth, (req, res) => {
-  Tests.find({ createdBy: req.userData.id })
+  Exams.find({ createdBy: req.userData.id })
     .sort({ endTime: -1 })
-    .exec((err, totalTests) => {
+    .exec((err, totalExams) => {
       if (err) {
         console.log("error");
         return res.status(404).send(err);
       } else {
-        const expiredTests = totalTests.filter(
+        const expiredExams = totalExams.filter(
           (ele) => new Date(ele.endTime) <= new Date()
         );
-        const remainingTests = totalTests.filter(
+        const remainingExams = totalExams.filter(
           (ele) => new Date(ele.endTime) > new Date()
         );
         return res.status(200).json({
           message: "Success",
-          result: { expiredTests, remainingTests },
+          result: { expiredExams, remainingExams },
         });
       }
     });
@@ -40,28 +40,28 @@ router.get("/getByUser", checkAuth, (req, res) => {
 //post route
 
 router.post("/add", checkAuth, (req, res) => {
-  Tests.create(req.body, (err, newlyCreatedTest) => {
+  Exams.create(req.body, (err, newlyCreatedExam) => {
     if (err) {
       console.log(err);
       return res.status(404).send(err);
     } else {
       return res
         .status(201)
-        .json({ message: "Added", result: newlyCreatedTest });
+        .json({ message: "Added", result: newlyCreatedExam });
     }
   });
 });
 
 // get details
 router.get("/details/:id", checkAuth, (req, res) => {
-  Tests.findById(req.params.id)
+  Exams.findById(req.params.id)
     .populate("questions")
-    .exec((err, foundTest) => {
+    .exec((err, foundExam) => {
       if (err) {
         console.log(err);
         return res.status(404).send(err);
       } else {
-        const filteredQuestion = foundTest.questions.map((ele) => {
+        const filteredQuestion = foundExam.questions.map((ele) => {
           const newEle = {
             _id: ele._id,
             questionName: ele.questionName,
@@ -79,40 +79,40 @@ router.get("/details/:id", checkAuth, (req, res) => {
         });
         return res.status(200).json({
           message: "Success",
-          result: { ...foundTest.toJSON(), questions: filteredQuestion },
+          result: { ...foundExam.toJSON(), questions: filteredQuestion },
         });
       }
     });
 });
 
-router.get("/fullDetails/:testId/:createrId", checkAuth, (req, res) => {
+router.get("/fullDetails/:examId/:createrId", checkAuth, (req, res) => {
   if (req.params.createrId !== req.userData.id) {
     return res.status(403).json({
       message: "Not authorized",
     });
   } else {
-    Tests.findById(req.params.testId)
+    Exams.findById(req.params.examId)
       .populate("questions")
-      .exec((err, foundTest) => {
+      .exec((err, foundExam) => {
         if (err) {
           console.log(err);
           return res.status(404).send(err);
         } else {
           return res
             .status(200)
-            .json({ message: "Success", result: foundTest });
+            .json({ message: "Success", result: foundExam });
         }
       });
   }
 });
 
-router.post("/update/:testId/:createrId", checkAuth, (req, res) => {
+router.post("/update/:examId/:createrId", checkAuth, (req, res) => {
   if (req.params.createrId !== req.userData.id) {
     return res.status(403).json({
       message: "Not authorized",
     });
   } else {
-    Tests.findByIdAndUpdate(req.params.testId, req.body, (err) => {
+    Exams.findByIdAndUpdate(req.params.examId, req.body, (err) => {
       if (err) {
         console.log(err);
         return res.status(404).send(err);
@@ -123,20 +123,19 @@ router.post("/update/:testId/:createrId", checkAuth, (req, res) => {
   }
 });
 //delete route
-router.delete("/delete/:testId/:createrId", checkAuth, (req, res) => {
-  console.log(req.params.createrId, req.userData.id);
+router.delete("/delete/:examId/:createrId", checkAuth, (req, res) => {
   if (req.params.createrId !== req.userData.id) {
     return res.status(403).json({
       message: "Not authorized",
     });
   } else {
-    Tests.findByIdAndRemove(req.params.testId, (err, deletedTest) => {
+    Exams.findByIdAndRemove(req.params.examId, (err, deletedExam) => {
       if (err) {
         return res.status(404).send(err);
       } else {
         return res
           .status(200)
-          .json({ message: "deleted", result: deletedTest });
+          .json({ message: "deleted", result: deletedExam });
       }
     });
   }

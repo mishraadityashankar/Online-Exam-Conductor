@@ -7,7 +7,7 @@ import toast from "react-simple-toasts";
 import { examDetailsStyles } from "../styles/ExamStyle";
 
 function ExamDetail(props) {
-  const expiryTimestamp = new Date(props.selectedTest.startTime);
+  const expiryTimestamp = new Date(props.selectedExam.startTime);
   const [isDisable, setIsDisable] = useState(true);
   const { seconds, minutes, hours, days } = useTimer({
     expiryTimestamp,
@@ -16,27 +16,27 @@ function ExamDetail(props) {
 
   const classes = examDetailsStyles();
   const newResponses = {
-    testId: props.selectedTest._id,
-    testName: props.selectedTest.testName,
+    examId: props.selectedExam._id,
+    examName: props.selectedExam.examName,
     studentId: props.userDetails._id,
-    questions: props.selectedTest.questions,
-    totalMarks: props.selectedTest.totalMarks,
-    passingMarks: props.selectedTest.passingMarks,
+    questions: props.selectedExam.questions,
+    totalMarks: props.selectedExam.totalMarks,
+    passingMarks: props.selectedExam.passingMarks,
     recordedAnswers: [],
   };
   const instructions = [
-    "It is an Online Examination system, fully computerized, user friendly having advanced security features making it fair, transparent and standardized",
+    "It is an Online Examination system, fully computerized, user friendly having advanced security features making it fair, transparent and standardized.",
     "The examination does not require using any paper, pen, pencil and calculator.",
-    "Every student will take the examination on a Laptop/Desktop/Smart Phone",
-    "Student can enter the exam only after start time of exam is reached",
-    "Student have to give exam in FULL SCREEN MODE and in any case if student exit from full screen, all the questions will be disabled and he/she needs to click on FULL SCREEN BUTTON to resume",
-    "On computer screen every student will be given objective type Multiple Correct Questions and students needs to select appropriate set of answers by clicking the checkboxes",
-    "Student can save there progress by clicking the 'SAVE' button",
-    "Student can resume the test before the end time is reached, if due to some reasons exit from the test window",
+    "Every student will take the examination on a Laptop/Desktop/Smart Phone.",
+    "Student can enter the exam only after start time of exam is reached.",
+    "Student have to give exam in FULL SCREEN MODE and in any case if student exit from full screen, all the questions will be disabled and he/she needs to click on FULL SCREEN BUTTON to resume.",
+    "On computer screen every student will be given objective type Multiple Correct Questions and students needs to select appropriate set of answers by clicking the checkboxes.",
+    "Student can save their progress by clicking the 'SAVE' button.",
+    "Student can resume the exam before the end time is reached, if due to some reasons exit from the exam window.",
     "There will be NO NEGATIVE MARKING for the wrong answers.",
-    "Students can use 'ASK DOUBT' section to ask any doubt in between the examination",
-    "The system automatically shuts down when the time limit is over OR when unfair activities recorded AND if examinee finishes the exam before time he can quit by pressing the 'End Test' button. The students don’t click the 'END TEST' Button until the student want to quit from Examination",
-    "Once the examination is over student can see the results by navigating to the 'MY GRADES' section",
+    "Students can use 'ASK DOUBT' section to ask any doubt in between the examination.",
+    "The system automatically shuts down when the time limit is over OR when unfair activities recorded AND if examinee finishes the exam before time he can quit by pressing the 'End Exam' button. The students don’t click the 'END EXAM' Button until the student want to quit from Examination.",
+    "Once the examination is over student can see the results by navigating to the 'MY GRADES' section.",
   ];
 
   const getDuration = (startTime, endTime) => {
@@ -58,11 +58,10 @@ function ExamDetail(props) {
       })
       .then((res) => {
         if (res.data.result.completed) {
-          toast("Test already attempted");
+          toast("Exam already attempted");
           toast("Redirecting to result page", 4000);
           props.setCurrPage("resultHistory");
         } else {
-          console.log(res.data);
           toast(res.data.message);
           props.setResponsesId(res.data.result._id);
           props.setLayout("examWindow");
@@ -84,36 +83,36 @@ function ExamDetail(props) {
             <Typography className={classes.heading1}>Exam Details</Typography>
             <Divider />
             <Typography className={classes.formElement}>
-              <span>Test Name </span> {props.selectedTest.testName}
+              <span>Exam Name </span> {props.selectedExam.examName}
             </Typography>
             <Typography className={classes.formElement}>
-              <span>Subject </span> {props.selectedTest.subject}
+              <span>Subject </span> {props.selectedExam.subject}
             </Typography>
 
             <Typography className={classes.formElement}>
               <span>Date </span>
-              {moment(props.selectedTest.startTime).format("YYYY-MM-DD")}
+              {moment(props.selectedExam.startTime).format("YYYY-MM-DD")}
             </Typography>
 
             <Typography className={classes.formElement}>
               <span>Time </span>
-              {moment(props.selectedTest.startTime).format("HH:mm")}
+              {moment(props.selectedExam.startTime).format("HH:mm")}
             </Typography>
 
             <Typography className={classes.formElement}>
               <span> Duration </span>
               {getDuration(
-                props.selectedTest.startTime,
-                props.selectedTest.endTime
+                props.selectedExam.startTime,
+                props.selectedExam.endTime
               )}
             </Typography>
             <Typography className={classes.formElement}>
               <span> Total Marks </span>
-              {props.selectedTest.totalMarks}
+              {props.selectedExam.totalMarks}
             </Typography>
             <Typography className={classes.formElement}>
               <span> Passing Marks </span>
-              {props.selectedTest.passingMarks}
+              {props.selectedExam.passingMarks}
             </Typography>
 
             <Typography className={classes.formElement}>

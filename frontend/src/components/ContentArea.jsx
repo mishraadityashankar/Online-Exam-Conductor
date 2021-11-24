@@ -20,7 +20,7 @@ function ContentArea(props) {
   const [currPage, setCurrPage] = useState("examList");
   const [curResponses, setCurResponses] = useState(null);
   const [responseHistory, setResponseHistory] = useState(null);
-  const [editTestDetails, setEditTestDetails] = useState(null);
+  const [editExamDetails, setEditExamDetails] = useState(null);
   const token = localStorage.getItem("OEC_token");
   useEffect(() => {
     axios
@@ -37,7 +37,6 @@ function ContentArea(props) {
           toast(res.data.message);
         }
       })
-      .then(() => console.log(props.username))
       .catch((err) => {
         toast(err.message);
         console.log(err);
@@ -59,9 +58,9 @@ function ContentArea(props) {
           setLayout={props.setLayout}
           userDetails={userDetails}
           token={token}
-          editTestDetails={editTestDetails}
+          editExamDetails={editExamDetails}
           setCurrPage={setCurrPage}
-          setEditTestDetails={setEditTestDetails}
+          setEditExamDetails={setEditExamDetails}
         ></CreateExam>
       );
     } else if (currPage === "editProfile") {
@@ -81,8 +80,8 @@ function ContentArea(props) {
           setLayout={props.setLayout}
           userDetails={userDetails}
           token={token}
-          selectedTest={props.selectedTest}
-          setSelectedTest={props.setSelectedTest}
+          selectedExam={props.selectedExam}
+          setSelectedExam={props.setSelectedExam}
           setCurrPage={setCurrPage}
         ></ExamList>
       ) : (
@@ -90,13 +89,13 @@ function ContentArea(props) {
           setLayout={props.setLayout}
           userDetails={userDetails}
           token={token}
-          selectedTest={props.selectedTest}
-          setSelectedTest={props.setSelectedTest}
+          selectedExam={props.selectedExam}
+          setSelectedExam={props.setSelectedExam}
           setCurrPage={setCurrPage}
           responseHistory={responseHistory}
           setResponseHistory={setResponseHistory}
-          editTestDetails={editTestDetails}
-          setEditTestDetails={setEditTestDetails}
+          editExamDetails={editExamDetails}
+          setEditExamDetails={setEditExamDetails}
         ></ExamListTeacher>
       );
     } else if (currPage === "examDetails") {
@@ -107,8 +106,8 @@ function ContentArea(props) {
           token={token}
           responsesId={props.responsesId}
           setResponsesId={props.setResponsesId}
-          selectedTest={props.selectedTest}
-          setSelectedTest={props.setSelectedTest}
+          selectedExam={props.selectedExam}
+          setSelectedExam={props.setSelectedExam}
           setCurrPage={setCurrPage}
         ></ExamDetail>
       ) : (
@@ -118,8 +117,8 @@ function ContentArea(props) {
           token={token}
           responsesId={props.responsesId}
           setResponsesId={props.setResponsesId}
-          selectedTest={props.selectedTest}
-          setSelectedTest={props.setSelectedTest}
+          selectedExam={props.selectedExam}
+          setSelectedExam={props.setSelectedExam}
           setCurrPage={setCurrPage}
           responseHistory={responseHistory}
           setResponseHistory={setResponseHistory}
@@ -131,8 +130,8 @@ function ContentArea(props) {
           setLayout={props.setLayout}
           userDetails={userDetails}
           token={token}
-          selectedTest={props.selectedTest}
-          setSelectedTest={props.setSelectedTest}
+          selectedExam={props.selectedExam}
+          setSelectedExam={props.setSelectedExam}
           setCurrPage={setCurrPage}
           curResponses={curResponses}
           setCurResponses={setCurResponses}
@@ -142,8 +141,8 @@ function ContentArea(props) {
           setLayout={props.setLayout}
           userDetails={userDetails}
           token={token}
-          selectedTest={props.selectedTest}
-          setSelectedTest={props.setSelectedTest}
+          selectedExam={props.selectedExam}
+          setSelectedExam={props.setSelectedExam}
           setCurrPage={setCurrPage}
           responseHistory={responseHistory}
           setResponseHistory={setResponseHistory}
@@ -155,8 +154,8 @@ function ContentArea(props) {
           setLayout={props.setLayout}
           userDetails={userDetails}
           token={token}
-          selectedTest={props.selectedTest}
-          setSelectedTest={props.setSelectedTest}
+          selectedExam={props.selectedExam}
+          setSelectedExam={props.setSelectedExam}
           setCurrPage={setCurrPage}
           curResponses={curResponses}
           setCurResponses={setCurResponses}
@@ -164,7 +163,7 @@ function ContentArea(props) {
       );
     } else return <></>;
   };
-  console.log(currPage);
+
   const content = () => {
     if (userDetails) {
       return (

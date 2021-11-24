@@ -21,18 +21,18 @@ import { createExamStyles } from "../styles/ExamStyle";
 import CreateQuestion from "./CreateQuestion";
 
 function CreateExam(props) {
-  const isEditing = props.editTestDetails ? true : false;
-  const prevTest = props.editTestDetails;
+  const isEditing = props.editExamDetails ? true : false;
+  const prevExam = props.editExamDetails;
   const initialExam = {
-    testName: isEditing ? prevTest.testName : "",
+    examName: isEditing ? prevExam.examName : "",
     questions: [],
     createdBy: props.userDetails._id,
     startTime: "",
     endTime: "",
-    subject: isEditing ? prevTest.subject : "",
-    passingMarks: isEditing ? prevTest.passingMarks : 0,
-    totalMarks: isEditing ? prevTest.totalMarks : 0,
-    activityThreshold: isEditing ? prevTest.activityThreshold : 3,
+    subject: isEditing ? prevExam.subject : "",
+    passingMarks: isEditing ? prevExam.passingMarks : 0,
+    totalMarks: isEditing ? prevExam.totalMarks : 0,
+    activityThreshold: isEditing ? prevExam.activityThreshold : 3,
   };
   const initialQuestion = {
     questionName: "",
@@ -57,10 +57,10 @@ function CreateExam(props) {
   const [totalQuestionList, setTotalQuestionList] = useState([]);
   const [pickedQuestion, setPickedQuestion] = useState(null);
   const [selectedQuestions, setSelectedQuestions] = useState(
-    isEditing ? prevTest.questions : []
+    isEditing ? prevExam.questions : []
   );
   const [totalMarks, setTotalMarks] = useState(
-    isEditing ? prevTest.totalMarks : 0
+    isEditing ? prevExam.totalMarks : 0
   );
   const [duration, setDuration] = useState(0);
   const [date, setDate] = useState("");
@@ -92,7 +92,6 @@ function CreateExam(props) {
         if (res.data.message === "Success") {
           setQuestionList(res.data.result);
           setTotalQuestionList(res.data.result);
-          console.log(res.data);
         } else {
           toast(res.data.message);
         }
@@ -155,8 +154,8 @@ function CreateExam(props) {
     const endDatetimeUTC = moment.utc(endTime).format();
     const questions = selectedQuestions.map((ele) => ele._id);
 
-    if (exam.testName === "") {
-      toast("Test Name cannot be empty");
+    if (exam.examName === "") {
+      toast("Exam Name cannot be empty");
       return;
     } else if (startTime == "Invalid Date" || endTime == "Invalid Date") {
       toast("Select date properly");
@@ -184,9 +183,10 @@ function CreateExam(props) {
       questions: questions,
       totalMarks: totalMarks,
     };
+
     const url = isEditing
-      ? "/test/update/" + prevTest._id + "/" + props.userDetails._id
-      : "/test/add";
+      ? "/exam/update/" + prevExam._id + "/" + props.userDetails._id
+      : "/exam/add";
     axios
       .post(url, reqBody, {
         headers: {
@@ -194,7 +194,6 @@ function CreateExam(props) {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setExam(initialExam);
         setDate("");
         setDuration(0);
@@ -202,9 +201,8 @@ function CreateExam(props) {
         setPickedQuestion(null);
         setSelectedQuestions([]);
         toast(res.data.message);
-        if (isEditing) {
-          props.setCurrPage("examList");
-        }
+        props.setEditExamDetails(null);
+        props.setCurrPage("examList");
       })
       .catch((err) => {
         console.log(err);
@@ -217,7 +215,6 @@ function CreateExam(props) {
   };
 
   const handleOptionChecked = (e, id) => {
-    console.log(id);
     const newAnswer = question.answer.map((ele, key) => {
       if (key === id) {
         return e.target.checked;
@@ -265,7 +262,6 @@ function CreateExam(props) {
         },
       })
       .then((res) => {
-        console.log(res.data);
         setOpen(false);
         toast(res.data.message, 4000);
         setQuestion(initialQuestion);
@@ -287,7 +283,7 @@ function CreateExam(props) {
           <Box className={classes1.gridOuter}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Box className={classes.headingLeft}>Test Details</Box>
+                <Box className={classes.headingLeft}>Exam Details</Box>
               </Grid>
               <Grid item xs={6}>
                 <Box className={classes.normalParaRight}>
@@ -297,9 +293,9 @@ function CreateExam(props) {
             </Grid>
             <Box className={classes.formElement}>
               <TextField
-                label="Test Name"
-                name="testName"
-                value={exam.testName}
+                label="Exam Name"
+                name="examName"
+                value={exam.examName}
                 onChange={handleChange}
                 fullWidth
                 size="small"
@@ -387,7 +383,7 @@ function CreateExam(props) {
                   color="primary"
                   onClick={handleSubmit}
                 >
-                  {isEditing ? "Update Test" : "Create Test"}
+                  {isEditing ? "Update Exam" : "Create Exam"}
                 </Button>
               </Grid>
             </Grid>

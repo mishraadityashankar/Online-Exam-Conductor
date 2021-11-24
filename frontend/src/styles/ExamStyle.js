@@ -139,7 +139,7 @@ export const examWindowStyles = makeStyles({
   headBox: {
     marginBottom: "20px",
   },
-  testName: {
+  examName: {
     fontSize: "24px !important",
     fontWeight: "bold !important",
   },
@@ -182,7 +182,7 @@ export const examListStyles = makeStyles({
       fontWeight: "bold !important",
     },
   },
-  notest: {
+  noexam: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -191,7 +191,7 @@ export const examListStyles = makeStyles({
     textAlign: "center",
     height: "60vh",
   },
-  notestTypo: {
+  noexamTypo: {
     fontSize: "28px !important",
     fontWeight: "bold !important",
     marginBottom: "20px !important",

@@ -30,7 +30,6 @@ function ResponsesList(props) {
       .then((res) => {
         if (res.data.message === "Success") {
           setResponsesList(res.data.result);
-          console.log(res.data.result);
         } else {
           toast(res.data.message);
         }
@@ -45,7 +44,6 @@ function ResponsesList(props) {
   }, []);
 
   const handleView = (id) => {
-    console.log(id);
     axios
       .get("/responses/details/" + id, {
         headers: {
@@ -54,7 +52,6 @@ function ResponsesList(props) {
       })
       .then((res) => {
         if (res.data.message === "Success") {
-          console.log(res.data);
           props.setCurResponses(res.data.result);
         } else {
           toast(res.data.message);
@@ -82,7 +79,7 @@ function ResponsesList(props) {
                     S.No
                   </TableCell>
                   <TableCell width="30%" sx={{ fontWeight: "bold" }}>
-                    Test Name
+                    Exam Name
                   </TableCell>
                   <TableCell
                     align="center"
@@ -129,7 +126,7 @@ function ResponsesList(props) {
                       {ind + 1}
                     </TableCell>
 
-                    <TableCell width="30%">{row.testName}</TableCell>
+                    <TableCell width="30%">{row.examName}</TableCell>
                     <TableCell align="center" width="15%">
                       {moment(row.finishTime).format("YYYY-MM-DD")}
                     </TableCell>

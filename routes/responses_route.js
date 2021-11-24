@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Responses = require("../models/responses_schema");
 const checkAuth = require("../utils/checkAuth");
-const Questions = require("../models/question_schema");
 
 // get all
 router.get("/getByUser", checkAuth, (req, res) => {
@@ -22,8 +21,8 @@ router.get("/getByUser", checkAuth, (req, res) => {
     });
 });
 
-router.get("/getByTestId/:testId", checkAuth, (req, res) => {
-  Responses.find({ testId: req.params.testId })
+router.get("/getByExamId/:examId", checkAuth, (req, res) => {
+  Responses.find({ examId: req.params.examId })
     .populate("studentId")
     .sort({ scoresObtained: -1, finishTime: 1 })
     .exec((err, totalResponses) => {
@@ -42,9 +41,8 @@ router.get("/getByTestId/:testId", checkAuth, (req, res) => {
 //post route
 
 router.post("/create", checkAuth, (req, res) => {
-  console.log(req.body);
   Responses.find(
-    { testId: req.body.testId, studentId: req.body.studentId },
+    { examId: req.body.examId, studentId: req.body.studentId },
     (err, foundStudentResponse) => {
       if (err) {
         console.log(err);
@@ -52,7 +50,6 @@ router.post("/create", checkAuth, (req, res) => {
           .status(404)
           .json({ message: "Cannot get response by student" });
       } else {
-        console.log(foundStudentResponse);
         if (foundStudentResponse.length) {
           return res
             .status(200)
@@ -63,7 +60,7 @@ router.post("/create", checkAuth, (req, res) => {
               return res.status(404).json({ message: "Cannot be created" });
             } else {
               res.status(201).json({
-                message: "Starting test",
+                message: "Starting exam",
                 result: newlyCreatedResponse,
               });
             }

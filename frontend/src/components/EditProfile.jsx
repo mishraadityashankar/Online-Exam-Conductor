@@ -38,7 +38,6 @@ function EditProfile(props) {
           },
         })
         .then((res) => {
-          console.log(res.data);
           toast(res.data.message);
           props.setUserDetails(user);
           setErrMsg("");

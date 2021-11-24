@@ -21,26 +21,25 @@ import { examListStyles } from "../styles/ExamStyle";
 function ExamList(props) {
   const classes = examListStyles();
   const [loading, setLoading] = useState(true);
-  const [testList, setTestList] = useState(null);
-  const [displayTest, setDisplayTest] = useState([]);
+  const [examList, setExamList] = useState(null);
+  const [displayExam, setDisplayExam] = useState([]);
   const [checked, setChecked] = useState(false);
 
   const handleChange = () => {
     setChecked((prev) => !prev);
   };
 
-  const fetchTests = () => {
+  const fetchExams = () => {
     axios
-      .get("/test/getByUser", {
+      .get("/exam/getByUser", {
         headers: {
           Authorization: "Bearer " + props.token,
         },
       })
       .then((res) => {
         if (res.data.message === "Success") {
-          setTestList(res.data.result);
-          setDisplayTest(res.data.result.remainingTests);
-          console.log(res.data);
+          setExamList(res.data.result);
+          setDisplayExam(res.data.result.remainingExams);
         } else {
           toast(res.data.message);
         }
@@ -52,29 +51,29 @@ function ExamList(props) {
       .finally(() => setLoading(false));
   };
   useEffect(() => {
-    fetchTests();
+    fetchExams();
   }, []);
 
   useEffect(() => {
     if (!loading) {
       if (checked) {
-        setDisplayTest(testList.expiredTests);
+        setDisplayExam(examList.expiredExams);
       } else {
-        setDisplayTest(testList.remainingTests);
+        setDisplayExam(examList.remainingExams);
       }
     }
   }, [checked]);
 
-  const handleDelete = (testId) => {
+  const handleDelete = (examId) => {
     axios
-      .delete("/test/delete/" + testId + "/" + props.userDetails._id, {
+      .delete("/exam/delete/" + examId + "/" + props.userDetails._id, {
         headers: {
           Authorization: "Bearer " + props.token,
         },
       })
       .then((res) => {
         toast(res.data.message);
-        fetchTests();
+        fetchExams();
       })
       .catch((err) => {
         console.log(err);
@@ -82,17 +81,16 @@ function ExamList(props) {
         props.setLayout("home");
       });
   };
-  const handleEdit = (testId) => {
+  const handleEdit = (examId) => {
     axios
-      .get("/test/fullDetails/" + testId + "/" + props.userDetails._id, {
+      .get("/exam/fullDetails/" + examId + "/" + props.userDetails._id, {
         headers: {
           Authorization: "Bearer " + props.token,
         },
       })
       .then((res) => {
         toast(res.data.message);
-        console.log(res.data.result);
-        props.setEditTestDetails(res.data.result);
+        props.setEditExamDetails(res.data.result);
         props.setCurrPage("createExam");
       })
       .catch((err) => {
@@ -101,8 +99,8 @@ function ExamList(props) {
         props.setLayout("home");
       });
   };
-  const handleEnter = (curTest) => {
-    props.setSelectedTest(curTest);
+  const handleEnter = (curExam) => {
+    props.setSelectedExam(curExam);
     props.setCurrPage("examDetails");
   };
 
@@ -113,9 +111,9 @@ function ExamList(props) {
     return m3 + " minutes";
   };
 
-  const getResults = (testId) => {
+  const getResults = (examId) => {
     axios
-      .get("/responses/getByTestId/" + testId, {
+      .get("/responses/getByExamId/" + examId, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("OEC_token"),
         },
@@ -123,7 +121,6 @@ function ExamList(props) {
       .then((res) => {
         if (res.data.message === "Success") {
           props.setResponseHistory(res.data.result);
-          console.log(res.data.result);
           props.setCurrPage("resultHistory");
           window.scrollTo({ top: 0 });
         } else {
@@ -151,17 +148,17 @@ function ExamList(props) {
     );
   };
 
-  const noTest = () => {
+  const noExam = () => {
     return (
-      <Box className={classes.notest}>
+      <Box className={classes.noexam}>
         <Box>
-          <Box>No {checked ? "expired " : "remaining "}test found</Box>
+          <Box>No {checked ? "expired " : "live "}exam found</Box>
           <Button
             style={{ marginTop: "20px" }}
             variant="outlined"
             onClick={() => props.setCurrPage("createExam")}
           >
-            Create Test
+            Create Exam
           </Button>
         </Box>
       </Box>
@@ -177,18 +174,18 @@ function ExamList(props) {
           <Box>
             <FormControlLabel
               control={<Switch checked={checked} onChange={handleChange} />}
-              label="Expired Test"
+              label="Expired Exam"
             />
           </Box>
-          {displayTest.length === 0 && noTest()}
+          {displayExam.length === 0 && noExam()}
           <Grid container spacing={2}>
-            {displayTest.map((ele, ind) => (
+            {displayExam.map((ele, ind) => (
               <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
                 <Box className={classes.box}>
                   <Grid container spacing={2} className={classes.typo}>
                     <Grid item xs={9}>
                       <Typography className={classes.heading1}>
-                        <span>Test Name: </span> {ele.testName}
+                        <span>Exam Name: </span> {ele.examName}
                       </Typography>
                     </Grid>
                     <Grid item xs={3}>

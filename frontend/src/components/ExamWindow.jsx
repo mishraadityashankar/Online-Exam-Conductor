@@ -18,8 +18,8 @@ import { examWindowStyles } from "../styles/ExamStyle";
 
 function ExamWindow(props) {
   const classes2 = examWindowStyles();
-  const selectedTest = props.selectedTest;
-  const [selectedTestDetails, setSelectedTestDetails] = useState(null);
+  const selectedExam = props.selectedExam;
+  const [selectedExamDetails, setSelectedExamDetails] = useState(null);
   const [answers, setAnswers] = useState(
     localStorage.getItem("Answers")
       ? JSON.parse(localStorage.getItem("Answers"))
@@ -27,7 +27,7 @@ function ExamWindow(props) {
   );
   const [errMsg, setErrMsg] = useState([]);
   const [count, setCount] = useState(0);
-  const expiryTimestamp = new Date(selectedTest.endTime);
+  const expiryTimestamp = new Date(selectedExam.endTime);
   const { seconds, minutes, hours, days } = useTimer({
     expiryTimestamp,
     onExpire: () => handleSubmit(),
@@ -42,14 +42,14 @@ function ExamWindow(props) {
   };
   useEffect(() => {
     axios
-      .get("/test/details/" + selectedTest._id, {
+      .get("/exam/details/" + selectedExam._id, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("OEC_token"),
         },
       })
       .then((res) => {
         if (res.data.message === "Success") {
-          setSelectedTestDetails(res.data.result);
+          setSelectedExamDetails(res.data.result);
           if (localStorage.getItem("Answers")) {
             setAnswers(JSON.parse(localStorage.getItem("Answers")));
           } else {
@@ -63,7 +63,6 @@ function ExamWindow(props) {
             );
           }
           setErrMsg(res.data.result.questions.map((ele) => ["", "", "", ""]));
-          console.log(res.data);
         } else {
           toast(res.data.message);
         }
@@ -73,11 +72,11 @@ function ExamWindow(props) {
         toast(err.message);
         props.setLayout("main");
       });
-  }, [selectedTest._id]);
+  }, [selectedExam._id]);
 
   useEffect(() => {
-    if (count > selectedTest.activityThreshold) {
-      toast("Test is ended because of Tab switches", 4000);
+    if (count > selectedExam.activityThreshold) {
+      toast("Exam is ended because of tab switches", 4000);
       handleSubmit();
     }
   }, [count]);
@@ -129,7 +128,7 @@ function ExamWindow(props) {
     }
 
     const boolAnswerString = savedAnswers.map((ele) => ele.toString());
-    console.log(boolAnswerString);
+
     axios
       .post(
         "/responses/saveResult",
@@ -155,7 +154,7 @@ function ExamWindow(props) {
   };
   return (
     <Box className={classes2.root}>
-      {selectedTestDetails && answers.length ? (
+      {selectedExamDetails && answers.length ? (
         <Grid container spacing={2}>
           <Grid
             item
@@ -166,7 +165,7 @@ function ExamWindow(props) {
             xl={8}
             className={classes2.questionGrid}
           >
-            {selectedTestDetails.questions.map((ele, ind) => (
+            {selectedExamDetails.questions.map((ele, ind) => (
               <Accordion
                 disabled={!document.fullscreenElement}
                 className={classes2.questionBox}
@@ -261,16 +260,16 @@ function ExamWindow(props) {
             <Box>
               <Box className={classes2.examDetailsBox}>
                 <Box className={classes2.headBox}>
-                  <Typography className={classes2.testName}>
-                    {"Test Name | " + selectedTest.testName}
+                  <Typography className={classes2.examName}>
+                    {"Exam Name | " + selectedExam.examName}
                   </Typography>
                 </Box>
                 <Box className={classes2.flexBox1}>
                   <Typography className={classes2.typo4}>
-                    Total Marks: {selectedTest.totalMarks}
+                    Total Marks: {selectedExam.totalMarks}
                   </Typography>
                   <Typography className={classes2.typo4}>
-                    Passing Marks: {selectedTest.passingMarks}
+                    Passing Marks: {selectedExam.passingMarks}
                   </Typography>
                 </Box>
                 <Box className={classes2.flexBox1}>
@@ -279,7 +278,7 @@ function ExamWindow(props) {
                     <span>{minutes}</span>:<span>{seconds}</span>
                   </Typography>
                   <Typography className={classes2.typo4}>
-                    Subject: {selectedTest.subject}
+                    Subject: {selectedExam.subject}
                   </Typography>
                 </Box>
                 {!document.fullscreenElement && (
@@ -304,14 +303,14 @@ function ExamWindow(props) {
                       fullWidth
                       onClick={handleSubmit}
                     >
-                      End Test
+                      End Exam
                     </Button>
                   </Grid>
                 </Grid>
               </Box>
               <ChatWindow
                 userDetails={props.username}
-                testId={selectedTest._id}
+                examId={selectedExam._id}
               ></ChatWindow>
             </Box>
           </Grid>

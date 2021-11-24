@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const testSchema = new Schema({
-  testName: { type: String, required: true },
+const examSchema = new Schema({
+  examName: { type: String, required: true },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -21,4 +21,4 @@ const testSchema = new Schema({
   passingMarks: { type: Number, required: true },
   activityThreshold: { type: Number, default: 3 },
 });
-module.exports = mongoose.model("Test", testSchema);
+module.exports = mongoose.model("Exam", examSchema);

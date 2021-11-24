@@ -9,7 +9,6 @@ router.get("/get", checkauth, (req, res) => {
     createdBy: req.userData.id,
   };
   if (subject && subject !== "") {
-    console.log(subject);
     conditions = { ...conditions, subject };
   }
   Questions.find({ ...conditions }, (err, totalQuestions) => {

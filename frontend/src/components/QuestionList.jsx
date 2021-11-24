@@ -14,7 +14,7 @@ import { questionStyles } from "../styles/ExamStyle";
 
 const formatAnswer = (answerArray) => {
   let ans = " ";
-  answerArray.map((ele, ind) => {
+  answerArray.forEach((ele, ind) => {
     if (ele) ans += String.fromCharCode(65 + ind) + " ";
   });
   return ans;

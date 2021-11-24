@@ -38,16 +38,8 @@ function Navbar(props) {
     <>
       <Box className={classes.root}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
+          <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
             <Box className={classes.navHead}>Online Exam Conductor</Box>
-          </Grid>
-          <Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
-            <Box
-              className={classes.navItem}
-              onClick={() => props.setLayout("register")}
-            >
-              Register
-            </Box>
           </Grid>
           <Grid item xs={12} sm={12} md={1} lg={1} xl={1}>
             <Box

@@ -55,7 +55,6 @@ function Register(props) {
       axios
         .post("/user/register", user)
         .then((res) => {
-          console.log(res.data);
           toast(res.data.message);
           setUser(intialState);
           setErrMsg("");

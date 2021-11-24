@@ -206,8 +206,9 @@ export const navbarStyle = makeStyles({
     overflow: "auto",
   },
   head: {
-    padding: "10px",
-    marginBottom: "20px",
+    padding: "10px !important",
+    marginBottom: "20px !important",
+    fontWeight: "bold !important",
   },
   typo: {
     padding: "5px",

@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const responsesSchema = new Schema({
-  testId: {
+  examId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Test",
+    ref: "Exam",
   },
-  testName: {
+  examName: {
     type: String,
     default: "N/A",
   },

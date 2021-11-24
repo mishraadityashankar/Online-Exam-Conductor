@@ -21,9 +21,10 @@ router.post("/register", (req, res) => {
             error: err,
           });
         } else {
-          return res
-            .status(201)
-            .json({ message: "Added", result: newlyCreatedUser });
+          return res.status(201).json({
+            message: "Registeration successful",
+            result: newlyCreatedUser,
+          });
         }
       });
     }
@@ -104,7 +105,6 @@ router.post("/add", (req, res) => {
 
 // get details
 router.get("/details/", checkAuth, (req, res) => {
-  console.log(req.userData);
   Users.find({ email: req.userData.email }, (err, foundUser) => {
     if (err) {
       console.log(err);

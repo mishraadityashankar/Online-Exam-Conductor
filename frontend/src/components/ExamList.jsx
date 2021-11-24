@@ -7,18 +7,17 @@ import { examListStyles } from "../styles/ExamStyle";
 
 function ExamList(props) {
   const classes = examListStyles();
-  const [testList, setTestList] = useState([]);
+  const [examList, setExamList] = useState([]);
   useEffect(() => {
     axios
-      .get("/test/get", {
+      .get("/exam/get", {
         headers: {
           Authorization: "Bearer " + props.token,
         },
       })
       .then((res) => {
         if (res.data.message === "Success") {
-          setTestList(res.data.result);
-          console.log(res.data);
+          setExamList(res.data.result);
         } else {
           toast(res.data.message);
         }
@@ -29,8 +28,8 @@ function ExamList(props) {
       });
   }, []);
 
-  const handleEnter = (curTest) => {
-    props.setSelectedTest(curTest);
+  const handleEnter = (curExam) => {
+    props.setSelectedExam(curExam);
     props.setCurrPage("examDetails");
   };
 
@@ -42,14 +41,14 @@ function ExamList(props) {
   };
   return (
     <Box className={classes.root}>
-      {testList.length ? (
+      {examList.length ? (
         <Grid container spacing={2}>
-          {testList.map((ele) => (
+          {examList.map((ele) => (
             <Grid item xs={12} sm={6} md={6} lg={4} xl={4}>
               <Box>
                 <Box className={classes.box}>
                   <Typography className={classes.heading1}>
-                    Test Name : {ele.testName}
+                    Exam Name: {ele.examName}
                   </Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={6}>
@@ -92,7 +91,7 @@ function ExamList(props) {
           ))}
         </Grid>
       ) : (
-        <Box className={classes.notest}>No Tests Found</Box>
+        <Box className={classes.noexam}>No Exams Found</Box>
       )}
     </Box>
   );

@@ -1,16 +1,14 @@
 import React, { useState } from "react";
-import ChatWindow from "./ChatWindow";
 import ContentArea from "./ContentArea";
 import ExamWindow from "./ExamWindow";
 import Home from "./Home";
-import Navbar from "./Navbar";
 import Register from "./Register";
 
 function MainLayout(props) {
   const initialPage = localStorage.getItem("OEC_token") ? "main" : "home";
 
   const [layout, setLayout] = useState(initialPage);
-  const [selectedTest, setSelectedTest] = useState(null);
+  const [selectedExam, setSelectedExam] = useState(null);
   const [responsesId, setResponsesId] = useState(null);
 
   const [username, setUsername] = useState(null);
@@ -23,8 +21,8 @@ function MainLayout(props) {
     } else if (layout === "main") {
       return (
         <ContentArea
-          selectedTest={selectedTest}
-          setSelectedTest={setSelectedTest}
+          selectedExam={selectedExam}
+          setSelectedExam={setSelectedExam}
           setLayout={setLayout}
           layout={layout}
           username={username}
@@ -38,8 +36,8 @@ function MainLayout(props) {
         <ExamWindow
           username={username}
           setUsername={setUsername}
-          selectedTest={selectedTest}
-          setSelectedTest={setSelectedTest}
+          selectedExam={selectedExam}
+          setSelectedExam={setSelectedExam}
           setLayout={setLayout}
           responsesId={responsesId}
           setResponsesId={setResponsesId}

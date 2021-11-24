@@ -17,19 +17,19 @@ import {
 function ExamWindowTeacher(props) {
   const classes = examWindowTeacherStyles();
   const [loading, setLoading] = useState(true);
-  const [startTest, setStartTest] = useState(false);
-  const selectedTest = props.selectedTest;
-  const [testDetails, setTestDetails] = useState(null);
-  const expiryTimestamp1 = new Date(selectedTest.startTime);
-  const expiryTimestamp2 = new Date(selectedTest.endTime);
+  const [startExam, setStartExam] = useState(false);
+  const selectedExam = props.selectedExam;
+  const [examDetails, setExamDetails] = useState(null);
+  const expiryTimestamp1 = new Date(selectedExam.startTime);
+  const expiryTimestamp2 = new Date(selectedExam.endTime);
   const { seconds, minutes, hours, days } = useTimer({
     expiryTimestamp: expiryTimestamp1,
-    onExpire: () => setStartTest(true),
+    onExpire: () => setStartExam(true),
   });
 
   const endTimer = useTimer({
     expiryTimestamp: expiryTimestamp2,
-    onExpire: () => handleTestEnd(),
+    onExpire: () => handleExamEnd(),
   });
   const getDuration = (startTime, endTime) => {
     let m1 = moment(startTime);
@@ -40,8 +40,8 @@ function ExamWindowTeacher(props) {
   useEffect(() => {
     axios
       .get(
-        "/test/fullDetails/" +
-          props.selectedTest._id +
+        "/exam/fullDetails/" +
+          props.selectedExam._id +
           "/" +
           props.userDetails._id,
         {
@@ -52,8 +52,7 @@ function ExamWindowTeacher(props) {
       )
       .then((res) => {
         if (res.data.message === "Success") {
-          setTestDetails(res.data.result);
-          console.log(res.data);
+          setExamDetails(res.data.result);
         } else {
           toast(res.data.message);
         }
@@ -65,9 +64,9 @@ function ExamWindowTeacher(props) {
       .finally(() => setLoading(false));
   }, []);
 
-  const getResults = (testId) => {
+  const getResults = (examId) => {
     axios
-      .get("/responses/getByTestId/" + testId, {
+      .get("/responses/getByExamId/" + examId, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("OEC_token"),
         },
@@ -75,7 +74,7 @@ function ExamWindowTeacher(props) {
       .then((res) => {
         if (res.data.message === "Success") {
           props.setResponseHistory(res.data.result);
-          console.log(res.data.result);
+
           props.setCurrPage("resultHistory");
           window.scrollTo({ top: 0 });
         } else {
@@ -88,10 +87,10 @@ function ExamWindowTeacher(props) {
         props.setLayout("home");
       });
   };
-  const handleTestEnd = () => {
-    toast("Test Ended", 4000);
+  const handleExamEnd = () => {
+    toast("Exam Ended", 4000);
     toast("Fetching result list", 4000);
-    getResults(props.selectedTest._id);
+    getResults(props.selectedExam._id);
   };
   const Loader = () => {
     return (
@@ -120,26 +119,26 @@ function ExamWindowTeacher(props) {
                 <Box>
                   <Box>
                     <Typography className={classes.heading2}>
-                      {"Test Name | " + props.selectedTest.testName}
+                      {"Exam Name | " + props.selectedExam.examName}
                     </Typography>
                   </Box>
                   <Box>
                     <Typography className={classes.formElement}>
-                      {"Total Marks  " + props.selectedTest.totalMarks}
+                      {"Total Marks  " + props.selectedExam.totalMarks}
                     </Typography>
                   </Box>
                   <Divider />
                   <Typography className={classes.formElement}>
-                    <span>Subject </span> {props.selectedTest.subject}
+                    <span>Subject </span> {props.selectedExam.subject}
                   </Typography>
                   <Typography className={classes.formElement}>
                     <span> Duration </span>
                     {getDuration(
-                      props.selectedTest.startTime,
-                      props.selectedTest.endTime
+                      props.selectedExam.startTime,
+                      props.selectedExam.endTime
                     )}
                   </Typography>
-                  {!startTest ? (
+                  {!startExam ? (
                     <Typography className={classes.formElement}>
                       <span>Starts in </span> {days}:{hours}:{minutes}:{seconds}
                     </Typography>
@@ -153,13 +152,13 @@ function ExamWindowTeacher(props) {
                 </Box>
               </Box>
               <Box className={classes.chatBox}>
-                {startTest ? (
+                {startExam ? (
                   <ChatWindow
                     userDetails={props.userDetails.name}
-                    testId={selectedTest._id}
+                    examId={selectedExam._id}
                   ></ChatWindow>
                 ) : (
-                  <Box className={classes.heading1}>Test not started yet</Box>
+                  <Box className={classes.heading1}>Exam not started yet</Box>
                 )}
               </Box>
             </Grid>
@@ -168,7 +167,7 @@ function ExamWindowTeacher(props) {
                 <Box className={classes.questionList}>
                   <QuestionList
                     role={props.userDetails.role}
-                    questions={testDetails.questions}
+                    questions={examDetails.questions}
                     deleteQuestion={() => console.log("Deleted")}
                   ></QuestionList>
                 </Box>

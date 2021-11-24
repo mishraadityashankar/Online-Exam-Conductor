@@ -15,21 +15,18 @@ function ChatWindow(props) {
     let socket = io();
     const user = props.userDetails;
     setUser(user);
-    socket.emit("join-room", props.testId, user);
+    socket.emit("join-room", props.examId, user);
     socket.on("createMessage", (userName, msg) => {
-      console.log(userName, msg);
       setMessages((oldMessages) => [...oldMessages, { userName, msg }]);
     });
 
     setSocket(socket);
 
     return () => socket.close();
-  }, [props.userDetails, props.testId]);
+  }, [props.userDetails, props.examId]);
 
   const handleSend = () => {
-    console.log(input);
     socket.emit("message", user, input);
-    console.log(messages);
     setInput("");
   };
 
@@ -46,7 +43,7 @@ function ChatWindow(props) {
         <Grid item xs={9}>
           <TextField
             label="Ask Question"
-            name="testName"
+            name="message"
             fullWidth
             value={input}
             onChange={handleChange}

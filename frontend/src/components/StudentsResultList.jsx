@@ -14,9 +14,11 @@ import {
 
 import moment from "moment";
 import { studentResultStyles } from "../styles/ResponseStyle";
+import { commonStyles } from "../styles/CommonStyle";
 
 function StudentsResultList(props) {
   const classes = studentResultStyles();
+  const classes1 = commonStyles();
   return (
     <Box className={classes.root}>
       {props.responseHistory ? (
@@ -24,7 +26,7 @@ function StudentsResultList(props) {
           <Grid item xs={3}>
             <Box className={classes.box}>
               <Typography className={classes.typo}>
-                <span>Test Name:</span> {props.responseHistory[0].testName}
+                <span>Exam Name:</span> {props.responseHistory[0].examName}
               </Typography>
 
               <Typography className={classes.typo}>
@@ -123,7 +125,7 @@ function StudentsResultList(props) {
           </Grid>
         </Grid>
       ) : (
-        <Box>Loading</Box>
+        <Box className={classes1.loading}>Loading</Box>
       )}
     </Box>
   );
