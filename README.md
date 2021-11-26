@@ -1,5 +1,7 @@
 # Online-Exam-Conductor
-It's a web app to make examinations easy and transparent. It provides a responsive UI to support  features like exam creation, automatic grading, results analysis and a time bounded examination window with restrictions on disabling full screen & tab/window switching. It also supports a real time query section for asking and resolving queries during examination. [Link to webapp](https://online-exam-conductor.herokuapp.com/)
+It's a web app to make examinations easy and transparent. It provides a responsive UI to support  features like exam creation, automatic grading, results analysis and a time bounded examination window with restrictions on disabling full screen & tab/window switching. It also supports a real time query section for asking and resolving queries during examination. <br/><br/>
+**Application Link -** [https://online-exam-conductor.herokuapp.com/](https://online-exam-conductor.herokuapp.com/) <br/>
+**Video Demo -** [https://www.youtube.com/watch?v=myWCGQ1esvw](https://www.youtube.com/watch?v=myWCGQ1esvw)
 
 ## Installation
 1. Install node and npm. [Click here to see node and npm installation](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
