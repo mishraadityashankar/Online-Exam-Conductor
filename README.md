@@ -41,6 +41,23 @@ Heroku | Hosting application in CI/CD fashion
 
 ## About Functionalities
 
+#### Student functionalities
+* Register, login and logout
+* Updating personal information
+* Can enter an environment where they can attempt the questions set by the teachers
+* Real time chat window to ask doubts in between examination
+* Automatic grading and score card generation after the exam is over
+* Detailed results of all the exams attempted by a student
+#### Faculty/Teacher functionalities
+* Register, login and logout
+* Updating personal information
+* Can enter into examination window of any live exam
+* Real time chat window to solve queries during test
+* Can create a new question for any exam
+* Can create an exam and can add/remove any existing question into it 
+* Can edit and delete any exam which is not expired yet
+* Can get the rank list of all the students sorted by scores and finish time as soon as any exam gets over
+
 ### Login & Register 
 Both faculty and student can register into the system by filling the appropriate details and by using same credentials can login into the system. Authentication is support by JWT authentication system.
 
