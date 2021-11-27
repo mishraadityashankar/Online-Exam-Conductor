@@ -3,6 +3,10 @@ It's a web app to make examinations easy and transparent. It provides a responsi
 **Application Link -** [https://online-exam-conductor.herokuapp.com/](https://online-exam-conductor.herokuapp.com/) <br/>
 **Video Demo -** [https://www.youtube.com/watch?v=myWCGQ1esvw](https://www.youtube.com/watch?v=myWCGQ1esvw)
 
+**Note -** To use the hosted application without registering into the platform you can use example credentials given below- <br/>
+ * **For a Teacher account** - **Email:** teacher@teacher.com and **Password:** teacher 
+ * **For a Student account** - **Email:** student@student.com and **Password:** student
+
 ## Installation
 1. Install node and npm. [Click here to see node and npm installation](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 2. Install mongoDB and create a local db. [Click here to see mongoDB installation](https://docs.mongodb.com/manual/installation/)
